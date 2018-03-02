@@ -7,12 +7,43 @@
     tools:context="com.example.applikasjon.MainActivity">
 
     <TextView
+        android:id="@+id/regLabel"
+        android:layout_width="133dp"
+        android:layout_height="69dp"
+        android:layout_marginTop="136dp"
+        android:text="Registrering"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="126dp" />
+
+    <EditText
+        android:id="@+id/passord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:contentDescription="Skriv inn passord"
+        android:ems="10"
+        android:hint="Passord"
+        android:inputType="textPassword"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="318dp" />
+
+    <EditText
+        android:id="@+id/epost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Epost adresse"
+        android:inputType="textEmailAddress"
+        tools:layout_editor_absoluteX="85dp"
+        tools:layout_editor_absoluteY="247dp" />
+
+    <Button
+        android:id="@+id/registrerOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Registrer"
+        tools:layout_editor_absoluteX="148dp"
+        tools:layout_editor_absoluteY="421dp" />
 
 </android.support.constraint.ConstraintLayout>
