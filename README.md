@@ -21,7 +21,7 @@ Applikasjonen har ingen funksjon annet enn som et konseptbevis for fingeravtrykk
 
 ## Lisens
 
-Dette prosjektet er lisensiert under Apache lisensen, versjon 2.0. Se [LICENSE.md](LICENSE.md) filen for detaljer.
+Dette prosjektet er lisensiert under Apache lisensen, versjon 2.0. Se filen [LICENSE](LICENSE) for detaljer.
 
 ## Anerkjennelser
 
