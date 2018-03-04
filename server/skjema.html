@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Innlogging og registrering</title>
+</head>
+<body>
+  <h1>Registrering</h1>
+  <form action="./" method="post">
+    <input type="hidden" id="registrer" name="registrer" value="1">
+    <input id="epost" name="epost" type="email" placeholder="E-postadresse" maxlength="255">
+    <br>
+    <input id="passord" name="passord" type="password" placeholder="Passord" minlength="8" maxlength="255">
+    <br>
+    <input type="submit">
+  </form>
+  <br>
+  <h1>Innlogging</h1>
+  <form action="./" method="post">
+    <input type="hidden" id="innlogging" name="innlogging" value="1">
+    <input id="epost" name="epost" type="email" placeholder="E-postadresse" maxlength="255">
+    <br>
+    <input id="passord" name="passord" type="password" placeholder="Passord" minlength="8" maxlength="255">
+    <br>
+    <textarea id="offentlig_nokkel" name="offentlig_nokkel" placeholder="Offentlig Nøkkel"></textarea><br>
+    <input type="submit">
+  </form>
+</body>
+
+</html>
