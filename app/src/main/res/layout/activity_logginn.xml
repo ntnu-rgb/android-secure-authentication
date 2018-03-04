@@ -38,7 +38,7 @@
                     android:id="@+id/epost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Skriv inn epost adresse"
+                    android:hint="@string/hint_epostadresse"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true" />
@@ -51,11 +51,12 @@
 
                 <EditText
                     android:id="@+id/passord"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="Skriv inn passord"
+                    android:hint="@string/hint_passord"
+                    android:textColorHint="@color/gray"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     android:inputType="textPassword"
                     android:visibility="visible" />
             </android.support.design.widget.TextInputLayout>
@@ -66,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Logg inn"
+                android:text="@string/action_logginn"
                 android:textStyle="bold" />
 
             <Button
@@ -75,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Registrer"
+                android:text="@string/action_registrer"
 
                 android:textStyle="bold" />
 

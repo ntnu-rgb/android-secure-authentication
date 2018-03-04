@@ -3,18 +3,26 @@
     <string name="title_activity_logginn">Logg inn</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="prompt_email">Epost</string>
+    <string name="prompt_password">Passord</string>
+    <string name="action_logginn">Logg inn</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_invalid_email">Denne epostadressen er ugyldig</string>
+    <string name="error_invalid_password">Passordet er for kort</string>
+    <string name="error_incorrect_password">Feil passord</string>
     <string name="error_field_required">This field is required</string>
+    <string name="hint_epostadresse">Skriv inn epostadresse</string>
+    <string name="tittel_registrering">Registrering</string>
+    <string name="action_registrer"> Registrer </string>
+    <string name="hint_passord">Skriv inn passord her</string>
+    <string name="feil_fingerLeser">Fingeravtrykk autentisering er ikke aktivert</string>
+    <string name="fingerAvtrykk"> Plasser fingeren på mobilen sin sensor </string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <item name="visible" type="id"/>
-    <item name="masked" type="id"/>
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
+    <string name="title_activity_fingerprint">FingerprintActivity</string>
+    <string name="bekreftID">Bekreft identitet</string>
 
 </resources>
