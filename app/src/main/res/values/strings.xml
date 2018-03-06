@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Applikasjon</string>
+    <string name="app_name">Autentisering</string>
     <string name="title_activity_logginn">Logg inn</string>
 
     <!-- Strings related to login -->
