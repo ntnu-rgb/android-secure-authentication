@@ -2,12 +2,12 @@ package com.example.applikasjon;
 
 import android.annotation.TargetApi;
 import android.app.KeyguardManager;
-import android.database.Cursor;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,12 +19,16 @@ import android.app.LoaderManager.LoaderCallbacks;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.Signature;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.security.spec.ECGenParameterSpec;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -37,16 +41,24 @@ public class FingerprintActivity extends AppCompatActivity {
 
 
     private KeyStore fNokkel;
-    private static final String KEYNAME = "NOKKEL";
+    public static final String KEYNAME = "NOKKEL";
     private Cipher cipher = null;
+    private KeyPairGenerator parGenerator;
     private TextView tekst;
+    private Signature signatur;
+    private FingerprintManager mngr;
 
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
+      //  ((InjectedApplication) getApplication()).inject(this);
         setContentView(R.layout.activity_fingerprint);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -65,78 +77,51 @@ public class FingerprintActivity extends AppCompatActivity {
                 if (!kManager.isKeyguardSecure()) {
                     Toast.makeText(this, "Låseskjermen er ikke sikret", Toast.LENGTH_SHORT).show();
                 }
-                else { //Generer nøkkel
-                    genererNokkel();
+                else { //Generer asymmetriske nøkler
+                    genererNokler();
                 }
-                if (cipherInit()) {
-
-                    FingerprintManager.CryptoObject cObject = new FingerprintManager.CryptoObject(cipher);
+                if (initSignatur()) {
+                    FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
                     FingerprintHjelper hjelper = new FingerprintHjelper(this);
-                    hjelper.startAutentisering(fManager, cObject);
+                    hjelper.startAutentisering(fManager, cObjekt);
+                    Log.d("SUKSESS", "Suksess, redirekt til neste vindu");
                 }
             }
         }
 
     }
 
-    private boolean cipherInit() {
+    private boolean initSignatur() {
         try {
+            //Initialiser signaturen ved hjelp av privatnøkkelen
+            fNokkel.load(null);
+            signatur = Signature.getInstance("SHA256withECDSA");
+            PrivateKey priv = (PrivateKey) fNokkel.getKey(KEYNAME, null);
+            signatur.initSign(priv);
+            return true;
 
-            //Hent ut et cipherobjekt som implementerer AES med CBC og PKCS7
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                cipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/" + KeyProperties.BLOCK_MODE_CBC + "/" + KeyProperties.ENCRYPTION_PADDING_PKCS7);
-
-            }
-            else return false;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
+        }  catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
             e.printStackTrace();
         }
-        try { //TODO: Fjern stacktracene før ferdigstilling
-
-            if (cipher == null) {
-                Log.d("myTag", "Cipher er fortsatt null...");
-                return false;
-            }
-
-                fNokkel.load(null);                                                     //Last inn keystore
-                SecretKey nokkel = (SecretKey) fNokkel.getKey(KEYNAME, null);        //Henter ut nøkkel fra keystore
-
-                cipher.init(Cipher.ENCRYPT_MODE, nokkel);                                      //Initier cipher utfra uthentet nøkkel
-
-                return true;
-            } catch (IOException e1) { //Hvis en exception oppstår, return false.
-                e1.printStackTrace();
-                return false;
-
-            } catch (NoSuchAlgorithmException e1) {
-                e1.printStackTrace();
-                return false;
-
-            } catch (CertificateException e1) {
-                e1.printStackTrace();
-                return false;
-
-            } catch (UnrecoverableKeyException e1) {
-                e1.printStackTrace();
-                return false;
-
-            } catch (KeyStoreException e1) {
-                e1.printStackTrace();
-                return false;
-
-            } catch (InvalidKeyException e1) {
-                e1.printStackTrace();
-                return false;
-
-            }
-        }
+       return false;
+    }
 
 
-    private void genererNokkel() {
-        KeyGenerator nokkelGenerator = null;
+    /**
+     * Funksjon for å generere asymmetriske nøkler
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void genererNokler() {
 
         try {
             fNokkel = KeyStore.getInstance("AndroidKeyStore");  //Last inn en android keystore instance
@@ -144,23 +129,28 @@ public class FingerprintActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         try {
-            nokkelGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore"); //Hent et KeyGenerator objekt som genererer hemmelige nøkler for AES
+            parGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore"); //Hent et KeyPairGenerator objekt som genererer hemmelige nøkler for AES
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
         }
 
+        //Oppretter asymmetriske nøkler
         try {
             fNokkel.load(null);                                 //Last inn keystore
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                nokkelGenerator.init(new KeyGenParameterSpec.Builder(KEYNAME, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT).setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                        .setUserAuthenticationRequired(true).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7).build());
+                parGenerator.initialize(
+                        new KeyGenParameterSpec.Builder(KEYNAME,
+                                KeyProperties.PURPOSE_SIGN)
+                                .setDigests(KeyProperties.DIGEST_SHA256)
+                                .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
+                                .setUserAuthenticationRequired(true)
+                                .setUserAuthenticationValidityDurationSeconds(-1)
+                                .build());
             }
-
-            nokkelGenerator.generateKey();
+            parGenerator.generateKeyPair();
 
         } catch (IOException e) {
             e.printStackTrace();

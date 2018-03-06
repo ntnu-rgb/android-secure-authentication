@@ -24,5 +24,9 @@
     <item name="masked" type="id" />
     <string name="title_activity_fingerprint">FingerprintActivity</string>
     <string name="bekreftID">Bekreft identitet</string>
+    <string name="fingerprint_not_recognized">Gjenkjenner ikke fingeravtrykk</string>
+    <string name="fingerprint_success">Fingeravtrykk godkjent</string>
+    <string name="fingerprint_hint" />
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

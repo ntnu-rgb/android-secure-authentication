@@ -5,4 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="gray">#a8a8a8</color>
     <color name="white">#ffffffff</color>
+    <color name="success_color" />
+    <color name="warning_color" />
+    <color name="hint_color" />
 </resources>

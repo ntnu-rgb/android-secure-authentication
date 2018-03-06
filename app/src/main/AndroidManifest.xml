@@ -25,6 +25,10 @@
         <activity
             android:name=".LogginnActivity"
             android:label="Logg inn" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
