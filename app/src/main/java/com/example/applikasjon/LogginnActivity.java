@@ -211,6 +211,11 @@ public class LogginnActivity extends AppCompatActivity implements LoaderCallback
         return password.length() > 4;
     }
 
+    @Override
+    public void onBackPressed() {
+        //Ikke gjør noe
+    }
+
     /**
      * Shows the progress UI and hides the login form.
      */
