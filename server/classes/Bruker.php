@@ -98,8 +98,9 @@ class Bruker {
   private function lagreOffentligNokkel($brukerId, $offentligNokkel) {
     do {
       $uuid = uniqid('', true);                                       // Genererer en (sannsynligvis) unik id
-      $sql = "SELECT COUNT(*) AS antall FROM nokkel WHERE uuid = '$uuid'";
-      $sth = $this->dbh->query($sql);
+      $sql = "SELECT COUNT(*) AS antall FROM nokkel WHERE uuid = ?";
+      $sth = $this->dbh->prepare($sql);
+      $sth->execute([$uuid]);
     }
     while($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0);              // Genererer på nytt dersom uuid ikke er unik
 
@@ -107,5 +108,43 @@ class Bruker {
     $sth = $this->dbh->prepare($sql);
     $sth->execute([$uuid, $offentligNokkel, $brukerId]);
     return ($sth->rowCount() == 1) ? $uuid : false;                    // Returnerer uuid dersom nøkkelen kunne settes inn
+  }
+
+  /**
+   * Genererer en utfordring knyttet til en spesifikk nøkkel
+   * 
+   * @param string $uuid Den unike id'en til brukeren sin nøkkel
+   * @return int En nonce (engangsnummer) som brukes som utfordring
+   */
+  public function genererUtfordring($uuid) {
+    $retur = [];
+
+    // TODO: Refaktorer etter best-practice
+
+    try {
+      $tilfeldigeBytes = random_bytes(16);                             // Genererer tilfeldig binær data
+    }
+    catch(Exception $e) {                                              // Dersom ikke en sikker PRNG er tilgjengelig, returner feilmelding.
+      $retur['suksess'] = false;                                       // Burde føre til en notifikasjon til systemadministrator
+      $retur['feilmelding'] = 'Fant ingen sikker kilde til tilfeldighet';
+      return $retur;
+    }
+
+    $tilfeldigeBytes = base64_encode($tilfeldigeBytes);                // Koder til base64 for å sikre at ingen tegn går tapt under overføring
+    $utfordring = $tilfeldigeBytes . time();                           // Setter tilfeldig data sammen med tidspunkt for å sikre at verdien er unik
+    $utloper = date('Y:m:d H:i:s', strtotime('+10 minutes'));  // TODO: Må den ha utløpstidspunkt, og i såfall så må vi behandle dette på klienten.
+    
+    $sql = 'DELETE FROM utfordring WHERE uuid = ?;
+    INSERT INTO utfordring(utfordring, uuid, utloper) VALUES(?, ?, ?)';
+    $sth = $this->dbh->prepare($sql);
+    if($sth->execute([$uuid, $utfordring, $uuid, $utloper])) {
+      $retur['suksess'] = true;
+      $retur['utfordring'] = $utfordring;
+    }
+    else {
+      $retur['suksess'] = false;
+      $retur['feilmelding'] = 'Fant ingen nøkler med angitt UUID';
+    }
+    return $retur;
   }
 }
