@@ -28,5 +28,7 @@
     <string name="fingerprint_success">Fingeravtrykk godkjent</string>
     <string name="fingerprint_hint" />
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_registrer_foresporsel">RegistrerForesporsel</string>
+    <string name="title_activity_logginn_foresporsel">LogginnForesporsel</string>
 
 </resources>

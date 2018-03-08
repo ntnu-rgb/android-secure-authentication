@@ -3,6 +3,7 @@
     package="com.example.applikasjon">
 
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -24,11 +25,17 @@
         <activity
             android:name=".LogginnActivity"
             android:label="Logg inn" />
-
-        <activity android:name=".FingerprintActivity"
-            android:label="Fingerprint Autentisering"
-            />
-
+        <activity
+            android:name=".FingerprintActivity"
+            android:label="Fingerprint Autentisering" />
+        <activity
+            android:name=".RegistrerForesporsel"
+            android:label="@string/title_activity_registrer_foresporsel"
+           />
+        <activity
+            android:name=".LogginnForesporsel"
+            android:label="@string/title_activity_logginn_foresporsel"
+           ></activity>
     </application>
 
 </manifest>
