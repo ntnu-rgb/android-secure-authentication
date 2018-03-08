@@ -18,49 +18,22 @@ $bruker = new Bruker($dbh);
  * 
  * Tips til sikker autentisering er tilgjengelig på: https://www.owasp.org/index.php/Authentication_Cheat_Sheet
  */
+
+header('Content-Type: application/json');
+
 if(isset($_POST['forstegangsautentisering'], $_POST['epost'], $_POST['passord'], $_POST['offentlig_nokkel'])) {
   $resultat = $bruker->loggInn($_POST['epost'], $_POST['passord'], $_POST['offentlig_nokkel']);
-  if($resultat['suksess']) {                   // Dersom brukeren kunne logges inn og nøkkelen kunne lagres
-    http_response_code(200);                   // 200 OK
-    echo $resultat['uuid'];                    // Skriver ut UUID til nøkkelen
-  }
-  else {                                       // Dersom brukeren ikke kunne logges inn eller nøkkelen ikke kunne lagres
-    if($resultat['feilmelding'] == 'Feil e-postadresse eller passord.') {
-      http_response_code(403);                 // 403 Forbidden
-      echo $resultat['feilmelding'];
-    }
-    else {
-      http_response_code(400);                 // 400 Bad Request
-      echo $resultat['feilmelding'];
-    }
-  }
+  echo json_encode($resultat);
 }
 else if(isset($_POST['registrer'], $_POST['epost'], $_POST['passord'])) {
   $resultat = $bruker->registrer($_POST['epost'], $_POST['passord']);
-  if($resultat['suksess']) {                    // Dersom brukeren kunne opprettes
-    http_response_code(201);                    // 201 Created
-  }
-  else {                                        // Dersom brukeren ikke kunne opprettes
-    http_response_code(409);                    // 409 Conflict
-    echo $resultat['feilmelding'];
-  }
+  echo json_encode($resultat);
 }
 else if(isset($_POST['hent_utfordring'], $_POST['uuid'])) {
   $resultat = $bruker->genererUtfordring($_POST['uuid']);
-  if($resultat['suksess'] === true) {            // Dersom utfordringen ble opprettet
-    http_response_code(201);                     // 201 Created
-    echo $resultat['utfordring'];                // Sender utfordringen
-  }
-  else {
-    if($resultat['feilmelding'] == 'Fant ingen sikker kilde til tilfeldighet') {
-      http_response_code(500);                   // 500 Internal Server Error
-      echo 'En feil har oppstått. Vennligst kontakt systemansvarlig';
-    }
-    else {
-      echo $resultat['feilmelding'];
-    }
-  }
+  echo json_encode($resultat);
 }
 else {
+  header('Content-Type: text/html; charset=utf-8');
   include 'skjema.html';
 }

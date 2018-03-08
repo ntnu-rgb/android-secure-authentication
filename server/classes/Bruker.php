@@ -39,12 +39,12 @@ class Bruker {
       }
       else {
         $retur['suksess'] = false;
-        $retur['feilmelding'] = 'Kunne ikke opprette brukeren.';
+        $retur['feilmelding'] = 'Kunne ikke opprette brukeren';
       }
     }
     else {
       $retur['suksess'] = false;
-      $retur['feilmelding'] = 'En bruker med den e-postadressen eksisterer allerede.';
+      $retur['feilmelding'] = 'En bruker med den e-postadressen eksisterer allerede';
     }
     return $retur;
   }
@@ -78,12 +78,12 @@ class Bruker {
       }
       else {                                                          // Passord feil, gir generell feilmelding
         $retur['suksess'] = false;
-        $retur['feilmelding'] = 'Feil e-postadresse eller passord.';
+        $retur['feilmelding'] = 'Feil e-postadresse eller passord';
       }
     }
     else {                                                            // E-postadresse feil, gir generell feilmelding
       $retur['suksess'] = false;
-      $retur['feilmelding'] = 'Feil e-postadresse eller passord.';
+      $retur['feilmelding'] = 'Feil e-postadresse eller passord';
     }
     return $retur;
   }
@@ -132,7 +132,7 @@ class Bruker {
 
     $tilfeldigeBytes = base64_encode($tilfeldigeBytes);                // Koder til base64 for å sikre at ingen tegn går tapt under overføring
     $utfordring = $tilfeldigeBytes . time();                           // Setter tilfeldig data sammen med tidspunkt for å sikre at verdien er unik
-    $utloper = date('Y:m:d H:i:s', strtotime('+10 minutes'));  // TODO: Må den ha utløpstidspunkt, og i såfall så må vi behandle dette på klienten.
+    $utloper = date('Y:m:d H:i:s', strtotime('+10 minutes'));  // TODO: Må den ha utløpstidspunkt? og i såfall så må vi behandle dette på klienten.
     
     $sql = 'DELETE FROM utfordring WHERE uuid = ?;
     INSERT INTO utfordring(utfordring, uuid, utloper) VALUES(?, ?, ?)';
@@ -143,7 +143,7 @@ class Bruker {
     }
     else {
       $retur['suksess'] = false;
-      $retur['feilmelding'] = 'Fant ingen nøkler med angitt UUID';
+      $retur['feilmelding'] = 'Fant ingen nøkkel med angitt UUID';
     }
     return $retur;
   }
