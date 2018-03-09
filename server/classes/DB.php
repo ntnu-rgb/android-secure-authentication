@@ -9,8 +9,7 @@ class DB {
   private $dbh = null;
 
   /**
-   * Constructor som oppretter et nytt PDO-objekt med detaljene som er satt over.
-   * Dersom det ikke er mulig å koble til databasen, vil det prøves å bare koble til database-serveren og opprette databasen.
+   * Constructor som oppretter et nytt PDO-objekt med detaljene som spesifiseres
    */
   private function __construct() {
 

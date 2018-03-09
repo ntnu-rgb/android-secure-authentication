@@ -29,8 +29,8 @@ else if(isset($_POST['registrer'], $_POST['epost'], $_POST['passord'])) {
   $resultat = $bruker->registrer($_POST['epost'], $_POST['passord']);
   echo json_encode($resultat);
 }
-else if(isset($_POST['hent_utfordring'], $_POST['uuid'])) {
-  $resultat = $bruker->genererUtfordring($_POST['uuid']);
+else if(isset($_POST['start_okt'], $_POST['uuid'], $_POST['offentlig_oktnokkel'], $_POST['signatur'])) {
+  $resultat = $bruker->startOkt($_POST['uuid'], $_POST['offentlig_oktnokkel'], $_POST['signatur']);
   echo json_encode($resultat);
 }
 else {

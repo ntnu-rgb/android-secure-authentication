@@ -46,23 +46,39 @@ CREATE TABLE IF NOT EXISTS `nokkel` (
   `uuid` char(23) NOT NULL,
   `offentlig_nokkel` tinyblob NOT NULL,
   `bruker` bigint(20) UNSIGNED NOT NULL,
-  PRIMARY KEY(uuid)
+  PRIMARY KEY(uuid),
   FOREIGN KEY(bruker) REFERENCES bruker(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
 --
--- Tabellstruktur for tabell `utfordring`
+-- Tabellstruktur for tabell `okt`
+--
+CREATE TABLE IF NOT EXISTS `okt` (
+  `nr` int UNSIGNED NOT NULL,
+  `nokkel` CHAR(23) NOT NULL,
+  `offentlig_oktnokkel` tinyblob NOT NULL,
+  `utloper` datetime NULL,
+  PRIMARY KEY(nr, nokkel),
+  FOREIGN KEY(nokkel) REFERENCES nokkel(uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellstruktur for tabell `nonce`
 --
 
-CREATE TABLE IF NOT EXISTS `utfordring` (
-  `utfordring` bigint(20) UNSIGNED NOT NULL,
-  `uuid` char(23) NOT NULL,
-  `utloper` datetime NOT NULL,
-  PRIMARY KEY(uuid)
-  FOREIGN KEY(uuid) REFERENCES nokkel(uuid)
+CREATE TABLE IF NOT EXISTS `nonce` (
+  `nokkel` CHAR(23) NOT NULL,
+  `oktNr` int UNSIGNED NOT NULL,
+  `nonce` BIGINT(20) NOT NULL,
+  PRIMARY KEY(nokkel, oktNr, nonce),
+  FOREIGN KEY(nokkel) REFERENCES nokkel(uuid),
+  FOREIGN KEY(oktNr) REFERENCES okt(nr)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 COMMIT;
 

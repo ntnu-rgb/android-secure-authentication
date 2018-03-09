@@ -4,11 +4,13 @@
  * Klasse for å behandle en bruker.
  */
 class Bruker {
-  private $dbh = null;
+  /** @var PDO Skal inneholde et PDO-objekt som mottas i constructoren */
+  private $dbh;
 
   /**
-   * Constructor som oppretter et nytt PDO-objekt med detaljene som er satt over.
-   * Dersom det ikke er mulig å koble til databasen, vil det prøves å bare koble til database-serveren og opprette databasen.
+   * Tar i mot og lagrer et PDO-objekt som er koblet til databasen
+   * 
+   * @param PDO $dbh Et PDO-objekt som er koblet til databasen.
    */
   public function __construct($dbh) {
     $this->dbh = $dbh;
@@ -96,54 +98,68 @@ class Bruker {
    * @return string Returnerer en UUID som er knyttet til nøkkelen, eventuelt null dersom nøkkelen ikke kunne legges inn.
    */
   private function lagreOffentligNokkel($brukerId, $offentligNokkel) {
+
+    $sql = 'SELECT COUNT(*) AS antall FROM nokkel WHERE offentlig_nokkel = ?';
+    $sth = $this->dbh->prepare($sql);                                   // Sjekker om en identisk nøkkel allerede er lagt inn
+    $sth->execute([$offentligNokkel]);
+    if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
+      return false;                                                     // Returnerer false dersom nøkkelen allerede eksisterer
+    }
+
     do {
-      $uuid = uniqid('', true);                                       // Genererer en (sannsynligvis) unik id
-      $sql = "SELECT COUNT(*) AS antall FROM nokkel WHERE uuid = ?";
+      $uuid = uniqid('', true);                                         // Genererer en (sannsynligvis) unik id for nøkkelen
+      $sql = 'SELECT COUNT(*) AS antall FROM nokkel WHERE uuid = ?';
       $sth = $this->dbh->prepare($sql);
       $sth->execute([$uuid]);
     }
-    while($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0);              // Genererer på nytt dersom uuid ikke er unik
+    while($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0);                // Genererer på nytt dersom uuid ikke er unik
 
     $sql = 'INSERT INTO nokkel(uuid, offentlig_nokkel, bruker) VALUES(?, ?, ?)';
     $sth = $this->dbh->prepare($sql);
     $sth->execute([$uuid, $offentligNokkel, $brukerId]);
-    return ($sth->rowCount() == 1) ? $uuid : false;                    // Returnerer uuid dersom nøkkelen kunne settes inn
+    return ($sth->rowCount() == 1) ? $uuid : false;                     // Returnerer uuid dersom nøkkelen kunne settes inn
   }
 
   /**
-   * Genererer en utfordring knyttet til en spesifikk nøkkel
+   * Starter en økt ved å lagre en angitt øktnøkkel dersom øktnøkkelen er signert av brukeren.
    * 
-   * @param string $uuid Den unike id'en til brukeren sin nøkkel
-   * @return int En nonce (engangsnummer) som brukes som utfordring
+   * @param string $uuid Den unike id'en til nøkkelen som det signeres med
+   * @param string $offentligOktnokkel Den offentlige nøkkelen som skal brukes til å autentisere kall resten av økten.
+   * @param string $signatur Signatur av øktnøkkelen som brukes til å autentisere brukeren som vil starte økten.
    */
-  public function genererUtfordring($uuid) {
+  public function startOkt($uuid, $offentligOktnokkel, $signatur) {
     $retur = [];
 
-    // TODO: Refaktorer etter best-practice
+    // TODO: Bekreft signatur
 
-    try {
-      $tilfeldigeBytes = random_bytes(16);                             // Genererer tilfeldig binær data
-    }
-    catch(Exception $e) {                                              // Dersom ikke en sikker PRNG er tilgjengelig, returner feilmelding.
-      $retur['suksess'] = false;                                       // Burde føre til en notifikasjon til systemadministrator
-      $retur['feilmelding'] = 'Fant ingen sikker kilde til tilfeldighet';
+    $sql = 'SELECT COUNT(*) AS antall FROM okt WHERE offentlig_oktnokkel = ?';
+    $sth = $this->dbh->prepare($sql);                                   // Sjekker at det ikke allerede eksisterer en økt med angitt nøkkel
+    $sth->execute([$offentligOktnokkel]);
+    if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
+      $retur['suksess'] = 'false';
+      $retur['feilmelding'] = 'Kunne ikke opprette økt';                // Gir feilmelding dersom en identisk nøkkel allerede eksisterer
       return $retur;
     }
 
-    $tilfeldigeBytes = base64_encode($tilfeldigeBytes);                // Koder til base64 for å sikre at ingen tegn går tapt under overføring
-    $utfordring = $tilfeldigeBytes . time();                           // Setter tilfeldig data sammen med tidspunkt for å sikre at verdien er unik
-    $utloper = date('Y:m:d H:i:s', strtotime('+10 minutes'));  // TODO: Må den ha utløpstidspunkt? og i såfall så må vi behandle dette på klienten.
-    
-    $sql = 'DELETE FROM utfordring WHERE uuid = ?;
-    INSERT INTO utfordring(utfordring, uuid, utloper) VALUES(?, ?, ?)';
+    $utloper = date('Y:m:d H:i:s', strtotime('+1 hour'));               // TODO: Hvor lenge skal den være gyldig?
+
+    $sql = 'SELECT MAX(nr) AS maks FROM okt WHERE nokkel = ?';          // Finner neste økt-nummer i rekken for angitt nøkkel
     $sth = $this->dbh->prepare($sql);
-    if($sth->execute([$uuid, $utfordring, $uuid, $utloper])) {
+    $sth->execute([$uuid]);
+    $maks = $sth->fetch(PDO::FETCH_ASSOC)['maks'];
+    $nummer = ($maks != null) ? $maks + 1 : 1;
+
+    $sql = 'INSERT INTO okt(nr, nokkel, offentlig_oktnokkel, utloper) VALUES(?, ?, ?, ?)';
+    $sth = $this->dbh->prepare($sql);                                   // Setter økt-nøkkelen inn i databasen
+    $sth->execute([$nummer, $uuid, $offentligOktnokkel, $utloper]);
+    if($sth->rowCount() == 1) {
       $retur['suksess'] = true;
-      $retur['utfordring'] = $utfordring;
+      $retur['oktNr'] = $nummer;                                        // Returnerer øktnummeret og utløpstidspunkt
+      $retur['utloper'] = $utloper;
     }
     else {
       $retur['suksess'] = false;
-      $retur['feilmelding'] = 'Fant ingen nøkkel med angitt UUID';
+      $retur['feilmelding'] = 'Kunne ikke opprette økt';
     }
     return $retur;
   }
