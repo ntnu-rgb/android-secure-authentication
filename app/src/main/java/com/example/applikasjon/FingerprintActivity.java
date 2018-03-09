@@ -10,11 +10,7 @@ import android.security.keystore.KeyProperties;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.app.LoaderManager.LoaderCallbacks;
-
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -30,23 +26,13 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.ECGenParameterSpec;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-
-import static java.lang.System.exit;
-
 public class FingerprintActivity extends AppCompatActivity {
 
 
     private KeyStore fNokkel;
     public static final String KEYNAME = "NOKKEL";
-    private Cipher cipher = null;
     private KeyPairGenerator parGenerator;
-    private TextView tekst;
     private Signature signatur;
-    private FingerprintManager mngr;
 
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -55,11 +41,9 @@ public class FingerprintActivity extends AppCompatActivity {
 
 
         super.onCreate(savedInstanceState);
-      //  ((InjectedApplication) getApplication()).inject(this);
         setContentView(R.layout.activity_fingerprint);
 
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         KeyguardManager kManager = (KeyguardManager)getSystemService(KEYGUARD_SERVICE);
@@ -84,7 +68,6 @@ public class FingerprintActivity extends AppCompatActivity {
                     FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
                     FingerprintHjelper hjelper = new FingerprintHjelper(this);
                     hjelper.startAutentisering(fManager, cObjekt);
-                    Log.d("SUKSESS", "Suksess, redirekt til neste vindu");
                 }
             }
         }
