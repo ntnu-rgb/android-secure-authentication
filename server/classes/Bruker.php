@@ -21,6 +21,7 @@ class Bruker {
    * 
    * @param string $epost E-postadressen til brukeren.
    * @param string $passord Passordet til brukeren.
+   * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
    */
   public function registrer($epost, $passord) {
     $retur = [];
@@ -48,7 +49,7 @@ class Bruker {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'En bruker med den e-postadressen eksisterer allerede';
     }
-    return $retur;
+    return json_encode($retur);
   }
 
   /**
@@ -57,6 +58,7 @@ class Bruker {
    * @param string $epost E-postadressen til brukeren.
    * @param string $passord Passordet til brukeren.
    * @param string $offentligNokkel Den offentlige nøkkelen som brukeren vil knytte til seg.
+   * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
    */
   public function loggInn($epost, $passord, $offentligNokkel) {
     $retur = [];
@@ -87,7 +89,7 @@ class Bruker {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Feil e-postadresse eller passord';
     }
-    return $retur;
+    return json_encode($retur);
   }
 
   /**
@@ -123,9 +125,10 @@ class Bruker {
   /**
    * Starter en økt ved å lagre en angitt øktnøkkel dersom øktnøkkelen er signert av brukeren.
    * 
-   * @param string $uuid Den unike id'en til nøkkelen som det signeres med
+   * @param string $uuid Den unike id'en til nøkkelen som det signeres med.
    * @param string $offentligOktnokkel Den offentlige nøkkelen som skal brukes til å autentisere kall resten av økten.
    * @param string $signatur Signatur av øktnøkkelen som brukes til å autentisere brukeren som vil starte økten.
+   * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
    */
   public function startOkt($uuid, $offentligOktnokkel, $signatur) {
     $retur = [];
@@ -161,6 +164,36 @@ class Bruker {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Kunne ikke opprette økt';
     }
-    return $retur;
+    return json_encode($retur);
+  }
+
+  /**
+   * Utfører en angitt handling. Krever at brukeren autentiserer seg.
+   * 
+   * @param string $uuid Id til nøkkelparet.
+   * @param int $oktNr Identifikator for økten (sammen med UUID til nøkkelparet).
+   * @param string $handlingsdata En JSON-kodet tekst med data tilknyttet handlingen.
+   * @param string $signatur Signatur av handlingen, utført med øktnøkkelen.
+   * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
+   */
+  public function utforHandling($uuid, $oktNr, $handlingsdata, $signatur) {
+    $retur = [];
+
+    if(true) { // TODO: Bekreft signatur
+      $handling = json_decode($handlingsdata, true);
+
+      // TODO: Sjekk at nonce ikke er brukt tidligere i samme økt
+
+      // TODO: Lagre unna nonce for økten
+
+      // Gjør handling
+
+      $retur['suksess'] = true;
+    }
+    else {
+      $retur['suksess'] = false;
+      $retur['feilmelding'] = '';
+    }
+    return json_encode($retur);
   }
 }

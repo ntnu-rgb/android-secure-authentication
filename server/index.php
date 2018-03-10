@@ -22,16 +22,16 @@ $bruker = new Bruker($dbh);
 header('Content-Type: application/json');
 
 if(isset($_POST['forstegangsautentisering'], $_POST['epost'], $_POST['passord'], $_POST['offentlig_nokkel'])) {
-  $resultat = $bruker->loggInn($_POST['epost'], $_POST['passord'], $_POST['offentlig_nokkel']);
-  echo json_encode($resultat);
+  echo $bruker->loggInn($_POST['epost'], $_POST['passord'], $_POST['offentlig_nokkel']);                      // Autentiser og lagre offentlig nøkkel
 }
 else if(isset($_POST['registrer'], $_POST['epost'], $_POST['passord'])) {
-  $resultat = $bruker->registrer($_POST['epost'], $_POST['passord']);
-  echo json_encode($resultat);
+  echo $bruker->registrer($_POST['epost'], $_POST['passord']);                                                // Registrer bruker
 }
 else if(isset($_POST['start_okt'], $_POST['uuid'], $_POST['offentlig_oktnokkel'], $_POST['signatur'])) {
-  $resultat = $bruker->startOkt($_POST['uuid'], $_POST['offentlig_oktnokkel'], $_POST['signatur']);
-  echo json_encode($resultat);
+  echo $bruker->startOkt($_POST['uuid'], $_POST['offentlig_oktnokkel'], $_POST['signatur']);                  // Start økt
+}
+else if(isset($_POST['uuid'], $_POST['oktNr'], $_POST['handlingsdata'], $_POST['signatur'])) {
+  echo $bruker->utforHandling($_POST['uuid'], $_POST['oktNr'], $_POST['handlingsdata'], $_POST['signatur']);  // Utfør handling i økt
 }
 else {
   header('Content-Type: text/html; charset=utf-8');
