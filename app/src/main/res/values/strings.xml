@@ -30,5 +30,8 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_registrer_foresporsel">RegistrerForesporsel</string>
     <string name="title_activity_logginn_foresporsel">LogginnForesporsel</string>
+    <string name="preference_file_key">FingerPrintAuth</string>
+    <string name="lagret_uuid">lagretuuid</string>
+    <string name="title_activity_start_okt">StartOkt</string>
 
 </resources>

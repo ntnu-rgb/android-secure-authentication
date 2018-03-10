@@ -10,7 +10,10 @@ import android.os.Build;
 import android.os.CancellationSignal;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.widget.Toast;
+
+import static com.example.applikasjon.MainActivity.uuid;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
@@ -39,7 +42,19 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
     @Override  //Hvis autentiseringen er godkjent
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult resultat) {
         super.onAuthenticationSucceeded(resultat);                                                          //Kall parentfunksjonen
-        kontekst.startActivity(new Intent(kontekst, LogginnActivity.class));                            //Send videre til logginn skjermen
+
+        //Sender til innlogging hvis uuid ikke finnes
+        if (uuid == null) {
+            kontekst.startActivity(new Intent(kontekst, LogginnActivity.class));
+        }
+
+
+        else {
+            Toast.makeText(kontekst, "UUID er"+uuid, Toast.LENGTH_SHORT).show();
+          //  kontekst.startActivity(new Intent(kontekst, RegistrerActivity.class));
+            Log.d("TEST", "UUID: "+uuid);
+        }
+        // kontekst.startActivity(new Intent(kontekst, LogginnActivity.class));                            //Send videre til logginn skjermen
     }
 
     @Override  //Hvis autentiseringen feilet

@@ -15,13 +15,13 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LogginnForesporsel extends StringRequest {
+public class StartOkt extends StringRequest {
 
     private static final String LOGGINNURL = "https://folk.ntnu.no/sturlaba/sfa/";
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
 
 
-    public LogginnForesporsel(String brukernavn, String passord, Response.Listener<String> listener) {
+    public StartOkt(String uuid, Response.Listener<String> listener) {
         super(Request.Method.POST, LOGGINNURL, listener, null);
 
         KeyStore keyStore = null;
@@ -35,10 +35,10 @@ public class LogginnForesporsel extends StringRequest {
             Log.d("NØKKELERROR", "Error ved henting av offentlig nøkkel ");
         }
         parametere = new HashMap<>();
-        parametere.put("epost", brukernavn);
-        parametere.put("passord", passord);
+        parametere.put("start_okt", "true");
+        parametere.put("uuid", uuid);
         parametere.put("offentlig_nokkel",offentligNokkel.toString());
-        parametere.put("forstegangsautentisering", "true");
+        //parametere.put("signatur", "..."); //TODO
     }
 
     @Override

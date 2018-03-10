@@ -10,6 +10,7 @@ import android.security.keystore.KeyProperties;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -53,26 +54,23 @@ public class FingerprintActivity extends AppCompatActivity {
         if (!fManager.isHardwareDetected()) {
             Toast.makeText(this, "Fingeravtrykk autentisering er ikke aktivert", Toast.LENGTH_SHORT).show();
         }
-        else {  //Sjekk at det finnes minst ett fingeravtrykk registrert på telefonen
-            if (!fManager.hasEnrolledFingerprints()) {
+        else if (!fManager.hasEnrolledFingerprints()) { //Sjekk at det finnes minst ett fingeravtrykk registrert på telefonen
                 Toast.makeText(this, "Ingen fingeravtrykk registrert. Registrer fingeravtrykk i innstillinger", Toast.LENGTH_SHORT).show();
-            }
-            else { //Sjekker at det er sikkerhet rundt opplåsning av mobil.
-                if (!kManager.isKeyguardSecure()) {
-                    Toast.makeText(this, "Låseskjermen er ikke sikret", Toast.LENGTH_SHORT).show();
-                }
-                else { //Generer asymmetriske nøkler
-                    genererNokler();
-                }
-                if (initSignatur()) {
-                    FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
-                    FingerprintHjelper hjelper = new FingerprintHjelper(this);
-                    hjelper.startAutentisering(fManager, cObjekt);
-                }
-            }
+        }
+        else if(!kManager.isKeyguardSecure()){ //Sjekker at det er sikkerhet rundt opplåsning av mobil.
+        Toast.makeText(this, "Låseskjermen er ikke sikret", Toast.LENGTH_SHORT).show();
+        }
+        else { //Generer asymmetriske nøkler
+            genererNokler();
+        }
+        if (initSignatur()) {
+            FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
+            FingerprintHjelper hjelper = new FingerprintHjelper(this);
+            hjelper.startAutentisering(fManager, cObjekt);
         }
 
     }
+
 
     private boolean initSignatur() {
         try {
@@ -83,18 +81,8 @@ public class FingerprintActivity extends AppCompatActivity {
             signatur.initSign(priv);
             return true;
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }  catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
+           Log.d("FEIL", "Kunne ikke initiere signatur");
         }
        return false;
     }
@@ -135,15 +123,8 @@ public class FingerprintActivity extends AppCompatActivity {
             }
             parGenerator.generateKeyPair();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | InvalidAlgorithmParameterException e) {
+            Log.d("FEIL", "Kunne ikke generere nøkler i FingerprintActivity");
         }
     }
-
 }

@@ -2,6 +2,7 @@ package com.example.applikasjon;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,6 +25,7 @@ public class LogginnActivity extends AppCompatActivity {
     // UI references.
     private AutoCompleteTextView ePost;
     private EditText passord;
+
 
 
     @Override
@@ -53,6 +55,15 @@ public class LogginnActivity extends AppCompatActivity {
                             Log.d("RESPONS", "UTHENTET"+response);
 
                             if (suksess) { //TODO: Meldingen her fjernes da testingen er over, bytt til riktig funksjonalitet
+
+
+                                String uuid = jsonRespons.getString("uuid");
+
+                                //Setter i gang editor for å lagre uuid
+
+                                SharedPreferences.Editor editor = MainActivity.pref.edit();
+                                editor.putString(getString(R.string.lagret_uuid), uuid);
+                                editor.commit();
 
                                 AlertDialog.Builder riktig = new AlertDialog.Builder(LogginnActivity.this);
 

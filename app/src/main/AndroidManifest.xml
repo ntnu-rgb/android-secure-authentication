@@ -30,12 +30,14 @@
             android:label="Fingerprint Autentisering" />
         <activity
             android:name=".RegistrerForesporsel"
-            android:label="@string/title_activity_registrer_foresporsel"
-           />
+            android:label="@string/title_activity_registrer_foresporsel" />
         <activity
             android:name=".LogginnForesporsel"
-            android:label="@string/title_activity_logginn_foresporsel"
-           ></activity>
+            android:label="@string/title_activity_logginn_foresporsel" />
+        <activity
+            android:name=".StartOkt"
+            android:label="@string/title_activity_start_okt"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
