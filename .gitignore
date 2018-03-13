@@ -8,5 +8,5 @@
 .externalNativeBuild
 /gradle.properties
 app/build
-app/*iml
+app/app.iml
 app/.idea
