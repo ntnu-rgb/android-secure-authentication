@@ -6,6 +6,10 @@ require_once 'classes/Bruker.php';
 $dbh = DB::hentDB();
 $bruker = new Bruker($dbh);
 
+$sql = 'INSERT INTO postdata(post) VALUES(?)';
+$sth = $dbh->prepare($sql);
+$sth->execute([file_get_contents('php://input')]);
+
 /**
  * Dette er ikke en anbefalt måte å behandle den initielle registreringen/innloggingen på!
  * 
