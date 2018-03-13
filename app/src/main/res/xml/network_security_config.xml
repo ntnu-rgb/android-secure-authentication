@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Tillat kun kryptert trafikk -->
+    <domain-config cleartextTrafficPermitted="false">
+
+        <!-- Instillingene skal gjelde for følgende domener -->
+        <domain includeSubdomains="true">ntnu.no</domain>
+
+        <!-- Sett utløpsdato for pins -->
+        <pin-set expiration="2024-11-18">
+            <!-- Pin sertifikater som skal tillates (en av sertifikatene
+                 i certificate chain'en må ha en av følgende hasher -->
+            <pin digest="SHA-256">1b2/cPyvQcgOZfdIOHfTbqqJvmE/rfTtVPDduhkeBHQ=</pin>
+            <pin digest="SHA-256">8651wEkMkH5ftiaLp57oqmx3KHTFzDgp7ZeJXR0ToBs=</pin>
+        </pin-set>
+    </domain-config>
+</network-security-config>
