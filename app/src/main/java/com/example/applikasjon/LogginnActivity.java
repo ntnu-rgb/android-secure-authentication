@@ -3,7 +3,9 @@ package com.example.applikasjon;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +42,7 @@ public class LogginnActivity extends AppCompatActivity {
 
 
         loggInnKnapp.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 Log.d("LOGGINN", "AKTIVERT");
@@ -89,9 +92,6 @@ public class LogginnActivity extends AppCompatActivity {
                 queue.add(foresporsel);
             }
         });
-
-
-
 
 
         //Knapp som sender deg til registreringssiden ved klikk

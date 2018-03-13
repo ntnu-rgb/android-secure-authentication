@@ -13,6 +13,10 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+
+import java.io.Serializable;
+
 import static com.example.applikasjon.MainActivity.uuid;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
@@ -50,16 +54,29 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
 
 
         else {
-            Toast.makeText(kontekst, "UUID er"+uuid, Toast.LENGTH_SHORT).show();
-          //  kontekst.startActivity(new Intent(kontekst, RegistrerActivity.class));
+          //  Toast.makeText(kontekst, "UUID er"+uuid, Toast.LENGTH_SHORT).show();
+            Intent okt = new Intent(kontekst, StartOkt.class);
+
+
+            Response.Listener<String> respons = new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    Log.d("RESPONS", "RESPONS");
+                }
+            };
+           // okt.putExtra("firstKeyName",uuid);
+          //  okt.putExtra("secondKeyName", (Serializable) respons);
+           // kontekst.startActivity(okt);
             Log.d("TEST", "UUID: "+uuid);
         }
-        // kontekst.startActivity(new Intent(kontekst, LogginnActivity.class));                            //Send videre til logginn skjermen
+        kontekst.startActivity(new Intent(kontekst, LogginnActivity.class));                            //Send videre til logginn skjermen
     }
 
     @Override  //Hvis autentiseringen feilet
     public void onAuthenticationFailed() {
         super.onAuthenticationFailed();                                                                     //Kall parentfunksjonen
         Toast.makeText(kontekst, "Fingeravtrykksautentisering feilet", Toast.LENGTH_SHORT).show();     //Vis feilmelding
+        return;
     }
 }

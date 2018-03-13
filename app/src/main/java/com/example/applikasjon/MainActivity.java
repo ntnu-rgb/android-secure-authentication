@@ -24,8 +24,6 @@ public class MainActivity extends AppCompatActivity {
         this.startActivity(new Intent(this, FingerprintActivity.class));
 
 
-
-
     }
 
 }

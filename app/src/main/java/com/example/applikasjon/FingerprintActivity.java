@@ -30,9 +30,9 @@ import java.security.spec.ECGenParameterSpec;
 public class FingerprintActivity extends AppCompatActivity {
 
 
-    private KeyStore fNokkel;
+    public static KeyStore fNokkel;
     public static final String KEYNAME = "NOKKEL";
-    private KeyPairGenerator parGenerator;
+    public static KeyPairGenerator parGenerator;
     private Signature signatur;
 
 
@@ -61,7 +61,7 @@ public class FingerprintActivity extends AppCompatActivity {
         Toast.makeText(this, "Låseskjermen er ikke sikret", Toast.LENGTH_SHORT).show();
         }
         else { //Generer asymmetriske nøkler
-            genererNokler();
+            genererNokler(null);
         }
         if (initSignatur()) {
             FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
@@ -92,7 +92,7 @@ public class FingerprintActivity extends AppCompatActivity {
      * Funksjon for å generere asymmetriske nøkler
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public void genererNokler() {
+    public static void genererNokler(String name) {
 
         try {
             fNokkel = KeyStore.getInstance("AndroidKeyStore");  //Last inn en android keystore instance
@@ -102,18 +102,17 @@ public class FingerprintActivity extends AppCompatActivity {
 
         try {
             parGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore"); //Hent et KeyPairGenerator objekt som genererer hemmelige nøkler for AES
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             e.printStackTrace();
         }
+
 
         //Oppretter asymmetriske nøkler
         try {
             fNokkel.load(null);                                 //Last inn keystore
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 parGenerator.initialize(
-                        new KeyGenParameterSpec.Builder(KEYNAME,
+                        new KeyGenParameterSpec.Builder((name == null) ? KEYNAME : name,
                                 KeyProperties.PURPOSE_SIGN)
                                 .setDigests(KeyProperties.DIGEST_SHA256)
                                 .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
