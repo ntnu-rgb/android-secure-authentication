@@ -53,20 +53,16 @@ class Bruker {
   }
 
   /**
-   * Funksjon for å logge inn en bruker.
+   * Funksjon for å autentisere en bruker for første gang på en mobil enhet.
    * 
    * @param string $epost E-postadressen til brukeren.
    * @param string $passord Passordet til brukeren.
    * @param string $offentligNokkel Den offentlige nøkkelen som brukeren vil knytte til seg.
    * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
    */
-  public function loggInn($epost, $passord, $offentligNokkel) {
+  public function forstegangsautentisering($epost, $passord, $offentligNokkel) {
     $retur = [];
     $epost = strtolower(trim($epost));                                // Trimmer epost og endrer til små bokstaver
-
-    $offentligNokkel = openssl_get_publickey(base64_decode($offentligNokkel));
-    $retur['offentlig_nokkel'] = $offentligNokkel;
-    
 
     $sql = 'SELECT id, epost, passordhash FROM bruker WHERE epost = ?';
     $sth = $this->dbh->prepare($sql);
@@ -104,6 +100,14 @@ class Bruker {
    * @return string Returnerer en UUID som er knyttet til nøkkelen, eventuelt null dersom nøkkelen ikke kunne legges inn.
    */
   private function lagreOffentligNokkel($brukerId, $offentligNokkel) {
+
+    $nokkelId = openssl_get_publickey($offentligNokkel);    // Sjekk at OpenSSL kan importere nøkkelen
+    if($nokkelId === false) {
+      return false;                                         // Avbryt dersom import feilet
+    }
+    else {
+      openssl_free_key($key);                               // Frigjør OpenSSL-objektet
+    }
 
     $sql = 'SELECT COUNT(*) AS antall FROM nokkel WHERE offentlig_nokkel = ?';
     $sth = $this->dbh->prepare($sql);                                   // Sjekker om en identisk nøkkel allerede er lagt inn

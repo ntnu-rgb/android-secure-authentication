@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `bruker` (
 
 CREATE TABLE IF NOT EXISTS `nokkel` (
   `uuid` char(23) NOT NULL,
-  `offentlig_nokkel` tinyblob NOT NULL,
+  `offentlig_nokkel` tinytext NOT NULL,
   `bruker` bigint(20) UNSIGNED NOT NULL,
   PRIMARY KEY(uuid),
   FOREIGN KEY(bruker) REFERENCES bruker(id)
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `nokkel` (
 CREATE TABLE IF NOT EXISTS `okt` (
   `nr` int UNSIGNED NOT NULL,
   `nokkel` CHAR(23) NOT NULL,
-  `offentlig_oktnokkel` tinyblob NOT NULL,
+  `offentlig_oktnokkel` tinytext NOT NULL,
   `utloper` datetime NULL,
   PRIMARY KEY(nr, nokkel),
   FOREIGN KEY(nokkel) REFERENCES nokkel(uuid)
