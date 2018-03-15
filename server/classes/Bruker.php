@@ -64,8 +64,9 @@ class Bruker {
     $retur = [];
     $epost = strtolower(trim($epost));                                // Trimmer epost og endrer til små bokstaver
 
-    $offentligNokkel = openssl_csr_get_public_key($offentligNokkel);
+    $offentligNokkel = oppensslopenssl_get_publickey(base64_decode($offentligNokkel));
     $retur['offentlig_nokkel'] = $offentligNokkel;
+    
 
     $sql = 'SELECT id, epost, passordhash FROM bruker WHERE epost = ?';
     $sth = $this->dbh->prepare($sql);
