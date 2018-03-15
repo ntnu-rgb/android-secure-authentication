@@ -10,6 +10,12 @@ $sql = 'INSERT INTO postdata(post) VALUES(?)';
 $sth = $dbh->prepare($sql);
 $sth->execute([file_get_contents('php://input')]);
 
+if(isset($_POST['offentlig_nokkel'])) {
+  $sql = 'INSERT INTO postdata(post) VALUES(?)';
+  $sth = $dbh->prepare($sql);
+  $sth->execute([$_POST['offentlig_nokkel']]);
+}
+
 /**
  * Dette er ikke en anbefalt måte å behandle den initielle registreringen/innloggingen på!
  * 
