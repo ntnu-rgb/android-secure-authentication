@@ -1,19 +1,26 @@
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
+apply plugin: 'com.android.application'
 
-    dependencies {
-        classpath "com.android.tools.build:gradle:3.0.1"
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.example.applikasjon"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 }
 
-apply plugin: 'com.android.application'
-
 repositories {
     google()
-    jcenter()
+    jcenter({url "http://jcenter.bintray.com/"})
 }
 
 dependencies {
@@ -27,20 +34,8 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
 }
 
-android {
-    compileSdkVersion 26
-    defaultConfig {
-        applicationId "com.example.applikasjon"
-        minSdkVersion 26
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+buildscript {
+    dependencies {
+        classpath "com.android.tools.build:gradle:3.0.1"
     }
 }

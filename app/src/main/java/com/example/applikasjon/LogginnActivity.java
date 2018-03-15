@@ -63,6 +63,7 @@ public class LogginnActivity extends AppCompatActivity {
                                 String uuid = jsonRespons.getString("uuid");
 
                                 //Setter i gang editor for å lagre uuid
+                                Log.d("SERVERSVAR", jsonRespons.toString());
 
                                 SharedPreferences.Editor editor = MainActivity.pref.edit();
                                 editor.putString(getString(R.string.lagret_uuid), uuid);

@@ -14,12 +14,15 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.example.applikasjon.FingerprintActivity.KEYNAME;
 
 public class LogginnForesporsel extends StringRequest {
 
@@ -34,19 +37,19 @@ public class LogginnForesporsel extends StringRequest {
         KeyStore keyStore = null;
         PublicKey offentligNokkel = null;
         PublicKey verificationKey = null;
-        String keystring = null;
+        String cert = null;
+        
         try {
             keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
             offentligNokkel =
-                    keyStore.getCertificate(FingerprintActivity.KEYNAME).getPublicKey();
-            KeyFactory factory = KeyFactory.getInstance(offentligNokkel.getAlgorithm());
-            X509EncodedKeySpec spec = new X509EncodedKeySpec(offentligNokkel.getEncoded());
-            verificationKey = factory.generatePublic(spec);
-            keystring = (Base64.getEncoder().encode(verificationKey.getEncoded())).toString();
-            Log.d("OFFENTLIG", keystring);
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException |
-        InvalidKeySpecException e ) {
+                    keyStore.getCertificate(KEYNAME).getPublicKey();
+
+            Log.d("OFFENTLIG", ""+keyStore.getCertificate(KEYNAME).getEncoded());
+            cert = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(keyStore.getCertificate(KEYNAME).getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
+
+
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e ) {
             Log.d("NØKKELERROR", "Error ved henting av offentlig nøkkel ");
         }
 
@@ -54,7 +57,7 @@ public class LogginnForesporsel extends StringRequest {
         parametere = new HashMap<>();
         parametere.put("epost", brukernavn);
         parametere.put("passord", passord);
-        parametere.put("offentlig_nokkel", keystring);
+        parametere.put("offentlig_nokkel", cert);
         parametere.put("forstegangsautentisering", "true");
     }
 

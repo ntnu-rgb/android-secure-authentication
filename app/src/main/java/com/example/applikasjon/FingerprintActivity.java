@@ -10,6 +10,7 @@ import android.security.keystore.KeyProperties;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,10 +23,14 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.KeyPair;
 import java.security.Signature;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.ECGenParameterSpec;
+
+import java.util.Arrays;
 
 public class FingerprintActivity extends AppCompatActivity {
 
@@ -79,6 +84,7 @@ public class FingerprintActivity extends AppCompatActivity {
             signatur = Signature.getInstance("SHA256withECDSA");
             PrivateKey priv = (PrivateKey) fNokkel.getKey(KEYNAME, null);
             signatur.initSign(priv);
+
             return true;
 
         } catch (NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
@@ -120,7 +126,8 @@ public class FingerprintActivity extends AppCompatActivity {
                                 .setUserAuthenticationValidityDurationSeconds(-1)
                                 .build());
             }
-            parGenerator.generateKeyPair();
+            KeyPair par = parGenerator.generateKeyPair();
+
 
         } catch (IOException | NoSuchAlgorithmException | CertificateException | InvalidAlgorithmParameterException e) {
             Log.d("FEIL", "Kunne ikke generere nøkler i FingerprintActivity");
