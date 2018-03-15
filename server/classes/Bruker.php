@@ -64,7 +64,7 @@ class Bruker {
     $retur = [];
     $epost = strtolower(trim($epost));                                // Trimmer epost og endrer til små bokstaver
 
-    $offentligNokkel = oppensslopenssl_get_publickey(base64_decode($offentligNokkel));
+    $offentligNokkel = openssl_get_publickey(base64_decode($offentligNokkel));
     $retur['offentlig_nokkel'] = $offentligNokkel;
     
 
