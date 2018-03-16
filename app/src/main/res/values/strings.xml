@@ -33,5 +33,13 @@
     <string name="preference_file_key">FingerPrintAuth</string>
     <string name="lagret_uuid">lagretuuid</string>
     <string name="title_activity_start_okt">StartOkt</string>
+    <string name="feilmelding">Feil</string>
+    <string name="internettfeil">Kan ikke koble til internett, sjekk internettilkoblingen din og prøv igjen</string>
+    <string name="ingenfingeravtrykk">Ingen fingeravtrykk lagret på enheten</string>
+    <string name="ok">OK</string>
+    <string name="laaseskjerm">Låseskjermen er ikke sikret.</string>
+    <string name="ingenfingerautentisering">Fingeravtrykksautentisering er ikke tilgjengelig</string>
+    <string name="manglerfingeravtrykk">Ingen fingeravtrykk registrer på enheten</string>
+    <string name="feil">En feil har oppstått. Start applikasjonen på nytt</string>
 
 </resources>
