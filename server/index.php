@@ -39,7 +39,7 @@ else if(isset($_POST['start_okt'], $_POST['uuid'], $_POST['offentlig_oktnokkel']
   echo $bruker->startOkt($_POST['uuid'], $_POST['offentlig_oktnokkel'], $_POST['signatur']);                  // Start økt
 }
 else if(isset($_POST['uuid'], $_POST['oktNr'], $_POST['handlingsdata'], $_POST['signatur'])) {
-  echo $bruker->utforHandling($_POST['uuid'], $_POST['oktNr'], $_POST['handlingsdata'], $_POST['signatur']);  // Utfør handling i økt
+  echo $bruker->utforHandling($_POST['uuid'], $_POST['oktNr'], $_POST['handlingsdata'], $_POST['nonce'], $_POST['signatur']);  // Utfør handling i økt
 }
 else if(isset($_POST['registrer'], $_POST['epost'], $_POST['passord'])) {
   echo $bruker->registrer($_POST['epost'], $_POST['passord']);                                                // Registrer bruker

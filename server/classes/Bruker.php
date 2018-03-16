@@ -58,7 +58,7 @@ class Bruker {
    * @param string $epost E-postadressen til brukeren.
    * @param string $passord Passordet til brukeren.
    * @param string $offentligNokkel Den offentlige nøkkelen som brukeren vil knytte til seg.
-   * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
+   * @return string En JSON-kodet tekst med returverdier som 'suksess', 'uuid' og eventuelt 'feilmelding'.
    */
   public function forstegangsautentisering($epost, $passord, $offentligNokkel) {
     $retur = [];
@@ -71,7 +71,7 @@ class Bruker {
     if($bruker != null) {                                             // Dersom en bruker med e-postadressen eksisterer
       if(password_verify($passord, $bruker['passordhash'])) {         // Dersom passord matcher
         $resultat = $this->lagreOffentligNokkel($bruker['id'], $offentligNokkel);  // Prøver å lagre den offentlige nøkkelen
-        if($resultat != null) {                                       // Dersom den offentlige nøkkelen kan lagres
+        if($resultat !== false) {                                     // Dersom den offentlige nøkkelen kan lagres
           $retur['suksess'] = true;                                   // Returner suksess og uuid
           $retur['uuid'] = $resultat;
         }
@@ -96,7 +96,7 @@ class Bruker {
    * Funksjon for å lagre den offentlige nøkkelen til en bruker
    * 
    * @param int $brukerId Id til brukeren som har autentisert seg og sendt inn nøkkelen.
-   * @param string $offentligNokkel Den offentlige nøkkelen som skal knyttes til brukeren.
+   * @param string $offentligNokkel Den offentlige nøkkelen (i PEM-format) som skal knyttes til brukeren.
    * @return string Returnerer en UUID som er knyttet til nøkkelen, eventuelt null dersom nøkkelen ikke kunne legges inn.
    */
   private function lagreOffentligNokkel($brukerId, $offentligNokkel) {
@@ -106,13 +106,14 @@ class Bruker {
       return false;                                         // Avbryt dersom import feilet
     }
     else {
-      openssl_free_key($key);                               // Frigjør OpenSSL-objektet
+      openssl_free_key($nokkelId);                          // Frigjør OpenSSL-objektet
     }
 
     $sql = 'SELECT COUNT(*) AS antall FROM nokkel WHERE offentlig_nokkel = ?';
     $sth = $this->dbh->prepare($sql);                                   // Sjekker om en identisk nøkkel allerede er lagt inn
     $sth->execute([$offentligNokkel]);
     if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
+
       return false;                                                     // Returnerer false dersom nøkkelen allerede eksisterer
     }
 
@@ -134,22 +135,45 @@ class Bruker {
    * Starter en økt ved å lagre en angitt øktnøkkel dersom øktnøkkelen er signert av brukeren.
    * 
    * @param string $uuid Den unike id'en til nøkkelen som det signeres med.
-   * @param string $offentligOktnokkel Den offentlige nøkkelen som skal brukes til å autentisere kall resten av økten.
-   * @param string $signatur Signatur av øktnøkkelen som brukes til å autentisere brukeren som vil starte økten.
-   * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
+   * @param string $offentligOktnokkel Den offentlige nøkkelen (i PEM-format) som skal brukes til å autentisere kall resten av økten.
+   * @param string $signatur En base64-kodet signatur av øktnøkkelen som brukes til å autentisere brukeren som vil starte økten.
+   * @return string En JSON-kodet tekst med returverdier som 'suksess', 'oktNr' og eventuelt 'feilmelding'.
    */
   public function startOkt($uuid, $offentligOktnokkel, $signatur) {
     $retur = [];
 
-    // TODO: Bekreft signatur
+    $sql = 'SELECT offentlig_nokkel FROM nokkel WHERE uuid = ?';        // Henter ut offentlig nøkkel som hører til den private
+    $sth = $this->dbh->prepare($sql);                                   // nøkkelen som øktnøkkelen skal være signert med.
+    $sth->execute([$uuid]);
+    $rad = $sth->fetch(PDO::FETCH_ASSOC);
+    if($rad !== null) {
+      $nokkel = openssl_get_publickey($rad['offentlig_nokkel']);        // Importerer nøkkel til OpenSSL
+    }
+    else {
+      $retur['suksess'] = false;
+      $retur['feilmelding'] = 'Fant ikke offentlig  nøkkel';
+      return json_encode($retur);                                       // Returnerer feilmelding dersom offentlig nøkkel ikke ble funnet
+    }
+ 
+    $signatur = base64_decode($signatur);
+    if(openssl_verify($offentligOktnokkel, $signatur, $nokkel, OPENSSL_ALGO_SHA256) !== 1) { // Sjekker om signaturen stemmer
+      $retur['suksess'] = false;
+      $retur['feilmelding'] = 'Ugyldig signatur';
+      openssl_free_key($nokkel);
+      return json_encode($retur);                                       // Returnerer feilmelding dersom signaturen var ugyldig
+    }
+    else {
+      openssl_free_key($nokkel);                                        // Frigjør OpenSSL nøkkel-objektet
+    }
+    
 
     $sql = 'SELECT COUNT(*) AS antall FROM okt WHERE offentlig_oktnokkel = ?';
     $sth = $this->dbh->prepare($sql);                                   // Sjekker at det ikke allerede eksisterer en økt med angitt nøkkel
     $sth->execute([$offentligOktnokkel]);
     if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
-      $retur['suksess'] = 'false';
+      $retur['suksess'] = false;
       $retur['feilmelding'] = 'Kunne ikke opprette økt';                // Gir feilmelding dersom en identisk nøkkel allerede eksisterer
-      return $retur;
+      return json_encode($retur);
     }
 
     $utloper = date('Y:m:d H:i:s', strtotime('+1 hour'));               // TODO: Hvor lenge skal den være gyldig?
@@ -181,27 +205,60 @@ class Bruker {
    * @param string $uuid Id til nøkkelparet.
    * @param int $oktNr Identifikator for økten (sammen med UUID til nøkkelparet).
    * @param string $handlingsdata En JSON-kodet tekst med data tilknyttet handlingen.
-   * @param string $signatur Signatur av handlingen, utført med øktnøkkelen.
+   * @param int $nonce Et engangsnummer som skal forekomme maks 1 gang per økt
+   * @param string $signatur En base64-kodet signatur av nonce'en, signert med den private øktnøkkelen.
    * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
    */
-  public function utforHandling($uuid, $oktNr, $handlingsdata, $signatur) {
+  public function utforHandling($uuid, $oktNr, $handlingsdata, $nonce, $signatur) {
     $retur = [];
 
-    if(true) { // TODO: Bekreft signatur
-      $handling = json_decode($handlingsdata, true);
+    $sql = 'SELECT COUNT(*) AS antall FROM nonce WHERE nokkel = ? AND oktNr = ? AND nonce = ?';
+    $sth = $this->dbh->prepare($sql);                                   // Sjekker at nonce ikke er mottatt tidligere
+    $sth->execute([$uuid, $oktNr, $nonce]);
+    if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
+      $retur['suksess'] = false;
+      $retur['feilmelding'] = 'Nonce allerede brukt';
+      return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke er unik for økten
+    } 
 
-      // TODO: Sjekk at nonce ikke er brukt tidligere i samme økt
-
-      // TODO: Lagre unna nonce for økten
-
-      // Gjør handling
-
-      $retur['suksess'] = true;
+    $sql = 'SELECT offentlig_oktnokkel FROM okt WHERE nokkel = ? AND nr = ?';  
+    $sth = $this->dbh->prepare($sql);                                   // Henter ut offentlig øktnøkkel som hører til den private
+    $sth->execute([$uuid, $oktNr]);                                     // øktnøkkelen som nonce skal være signert med.
+    $rad = $sth->fetch(PDO::FETCH_ASSOC);
+    if($rad !== null) {
+      $nokkel = openssl_get_publickey($rad['offentlig_oktnokkel']);     // Importerer nøkkel til OpenSSL
     }
     else {
       $retur['suksess'] = false;
-      $retur['feilmelding'] = '';
+      $retur['feilmelding'] = 'Fant ikke offentlig øktnøkkel';
+      return json_encode($retur);                                       // Returnerer feilmelding dersom offentlig øktnøkkel ikke ble funnet
     }
+
+    $signatur = base64_decode($signatur);
+    if(openssl_verify($nonce, $signatur, $nokkel, OPENSSL_ALGO_SHA256) !== 1) { // Sjekker om signaturen stemmer
+      $retur['suksess'] = false;
+      $retur['feilmelding'] = 'Ugyldig signatur';
+      openssl_free_key($nokkel);
+      return json_encode($retur);                                       // Returnerer feilmelding dersom signaturen var ugyldig
+    }
+    else {
+      openssl_free_key($nokkel);                                        // Frigjør OpenSSL nøkkel-objektet
+    }
+
+    $sql = 'INSERT INTO nonce(nokkel, oktNr, nonce) VALUES(?, ?, ?)';   // Lagrer unna nonce
+    $sth = $this->dbh->prepare($sql);
+    $sth->execute([$uuid, $oktNr, $nonce]);
+    if($sth->rowCount() !== 1) {                                        // Sjekker at nonce ble lagret
+      $retur['suksess'] = false;
+      $retur['feilmelding'] = 'Kunne ikke lagre ny nonce';
+      return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke kunne lagres
+    }
+
+    $handling = json_decode($handlingsdata, true);
+
+    // Gjør handling
+
+    $retur['suksess'] = true;
     return json_encode($retur);
   }
 }
