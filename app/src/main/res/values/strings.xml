@@ -1,45 +1,22 @@
 <resources>
     <string name="app_name">Autentisering</string>
-    <string name="title_activity_logginn">Logg inn</string>
-
-    <!-- Strings related to login -->
-    <string name="prompt_email">Epost</string>
-    <string name="prompt_password">Passord</string>
     <string name="action_logginn">Logg inn</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">Denne epostadressen er ugyldig</string>
-    <string name="error_invalid_password">Passordet er for kort</string>
-    <string name="error_incorrect_password">Feil passord</string>
-    <string name="error_field_required">This field is required</string>
     <string name="hint_epostadresse">Skriv inn epostadresse</string>
     <string name="tittel_registrering">Registrering</string>
     <string name="action_registrer"> Registrer </string>
     <string name="hint_passord">Skriv inn passord her</string>
-    <string name="feil_fingerLeser">Fingeravtrykk autentisering er ikke aktivert</string>
-    <string name="fingerAvtrykk"> Plasser fingeren på mobilen sin sensor </string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="fingerAvtrykk"> Plasser fingeren på mobilen sin fingeravtrykk-leser</string>
     <item name="visible" type="id" />
     <item name="masked" type="id" />
-    <string name="title_activity_fingerprint">FingerprintActivity</string>
-    <string name="bekreftID">Bekreft identitet</string>
-    <string name="fingerprint_not_recognized">Gjenkjenner ikke fingeravtrykk</string>
-    <string name="fingerprint_success">Fingeravtrykk godkjent</string>
-    <string name="fingerprint_hint" />
-    <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_registrer_foresporsel">RegistrerForesporsel</string>
     <string name="title_activity_logginn_foresporsel">LogginnForesporsel</string>
     <string name="preference_file_key">FingerPrintAuth</string>
     <string name="lagret_uuid">lagretuuid</string>
     <string name="title_activity_start_okt">StartOkt</string>
-    <string name="feilmelding">Feil</string>
     <string name="internettfeil">Kan ikke koble til internett, sjekk internettilkoblingen din og prøv igjen</string>
-    <string name="ingenfingeravtrykk">Ingen fingeravtrykk lagret på enheten</string>
     <string name="ok">OK</string>
-    <string name="laaseskjerm">Låseskjermen er ikke sikret.</string>
-    <string name="ingenfingerautentisering">Fingeravtrykksautentisering er ikke tilgjengelig</string>
-    <string name="manglerfingeravtrykk">Ingen fingeravtrykk registrer på enheten</string>
-    <string name="feil">En feil har oppstått. Start applikasjonen på nytt</string>
-
+    <string name="laaseskjerm">Du må aktivere en sikker skjermlås før du kan fortsette.</string>
+    <string name="ingenfingerautentisering">Denne telefonen ser ikke ut til å støtte fingeravtrykk-autentisering.</string>
+    <string name="manglerfingeravtrykk">Legg inn minst ett fingeravtrykk på enheten før du fortsetter. Dette gjøres via instillinger på telefonen.</string>
+    <string name="feil">En feil har oppstått. Vennligst prøv å starte applikasjonen på nytt.</string>
 </resources>

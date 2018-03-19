@@ -1,6 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <drawable name="ic_fp_40px" />
-    <drawable name="ic_fingerprint_success" />
-    <drawable name="ic_fingerprint_error" />
 </resources>
