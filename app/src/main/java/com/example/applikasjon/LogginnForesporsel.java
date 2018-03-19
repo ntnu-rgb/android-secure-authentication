@@ -25,7 +25,7 @@ public class LogginnForesporsel extends StringRequest {
     private Context kontekst = null;
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public LogginnForesporsel(String brukernavn, String passord, Response.Listener<String> listener, Context con) {
         super(Request.Method.POST, LOGGINNURL, listener, null);
 

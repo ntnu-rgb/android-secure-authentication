@@ -38,7 +38,7 @@ public class LogginnActivity extends AppCompatActivity {
 
 
             loggInnKnapp.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.O)
+                @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onClick(View view) {
                     Log.d("LOGGINN", "AKTIVERT");
