@@ -19,4 +19,5 @@
     <string name="ingenfingerautentisering">Denne telefonen ser ikke ut til å støtte fingeravtrykk-autentisering.</string>
     <string name="manglerfingeravtrykk">Legg inn minst ett fingeravtrykk på enheten før du fortsetter. Dette gjøres via instillinger på telefonen.</string>
     <string name="feil">En feil har oppstått. Vennligst prøv å starte applikasjonen på nytt.</string>
+    <string name="autentiseringsfeil">Autentisering feilet. Vennligst prøv igjen</string>
 </resources>

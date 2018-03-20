@@ -47,7 +47,7 @@ public class RegistrerActivity extends AppCompatActivity {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();  //TODO: Fjern før ferdigstilling
-                            MainActivity.visFeilMelding("Feil ved serverkommunikasjon", RegistrerActivity.this);
+
                         }
                     }
                 };

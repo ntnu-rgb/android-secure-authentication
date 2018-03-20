@@ -44,18 +44,17 @@ public class StartOkt extends StringRequest {
         KeyStore keyStore = null;
         PublicKey offentligNokkel = null;
         String sig = null;
+        String cert = null;
         try {
             keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
             offentligNokkel =
                     keyStore.getCertificate(okt).getPublicKey();
-            KeyFactory factory = KeyFactory.getInstance(offentligNokkel.getAlgorithm());
-            X509EncodedKeySpec spec = new X509EncodedKeySpec(offentligNokkel.getEncoded());
-            verificationKey = factory.generatePublic(spec);
-            encodedString = Base64.encode(verificationKey.getEncoded(), Base64.DEFAULT);
-            keystring = encodedString.toString();
-        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException |
-                InvalidKeySpecException e ) {
+            offentligNokkel =
+                    keyStore.getCertificate(okt).getPublicKey();
+            cert = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(keyStore.getCertificate(okt).getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
+
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e ) {
             MainActivity.visFeilMelding("Feil ved serverkommunikasjon", con);
         }
         Signature signatur = null;
@@ -64,16 +63,17 @@ public class StartOkt extends StringRequest {
             signatur = Signature.getInstance("SHA256withECDSA");
             priv = (PrivateKey) keyStore.getKey(FingerprintActivity.KEYNAME, null);
             signatur.initSign(priv);
-            signatur.update(encodedString);
+            byte [] keyBytes = cert.getBytes();
+            signatur.update(keyBytes);
             byte[] signaturBytes = signatur.sign();
-            sig =  (Base64.encode(verificationKey.getEncoded(), Base64.DEFAULT)).toString();
+            sig =  (Base64.encodeToString(verificationKey.getEncoded(), Base64.DEFAULT));
         } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException | SignatureException e) {
             MainActivity.visFeilMelding("Feil ved serverkommunikasjon", con);
         }
         parametere = new HashMap<>();
         parametere.put("start_okt", "true");
         parametere.put("uuid", uuid);
-        parametere.put("offentlig_nokkel", keystring);
+        parametere.put("offentlig_nokkel", cert);
         parametere.put("signatur", sig);
     }
 

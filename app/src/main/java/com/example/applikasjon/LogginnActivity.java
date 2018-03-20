@@ -41,7 +41,6 @@ public class LogginnActivity extends AppCompatActivity {
                 @RequiresApi(api = Build.VERSION_CODES.M)
                 @Override
                 public void onClick(View view) {
-                    Log.d("LOGGINN", "AKTIVERT");
                     final String brukernavn = ePost.getText().toString();
                     final String pass = passord.getText().toString();
 
@@ -63,9 +62,10 @@ public class LogginnActivity extends AppCompatActivity {
                                     editor.commit();
 
                                     AlertDialog.Builder riktig = new AlertDialog.Builder(LogginnActivity.this);
+
                                     riktig.setMessage("Riktig innlogging").setNegativeButton("Overfør til neste vindu", null).create().show();
 
-                                    //Intent intent = new Intent(LogginnActivity.this, null); //TODO: Erstatt null med det logginn viderefører til
+                                    Intent intent = new Intent(LogginnActivity.this, StartOkt.class); //TODO: Erstatt null med det logginn viderefører til
                                 } else {
                                     MainActivity.visFeilMelding("Feil ved innlogging", LogginnActivity.this);
                                 }
