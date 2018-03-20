@@ -67,7 +67,13 @@ public class FingerprintActivity extends AppCompatActivity {
             MainActivity.visFeilMelding(this.getString(R.string.internettfeil), this);
         }
         else { //Generer asymmetriske nøkler
-            genererNokler(null);
+            if(MainActivity.uuid == null) {
+                genererNokler(null, false);
+            }
+            else {
+                genererNokler(null, true);
+            }
+
             if (initSignatur()) {
                 FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
                 FingerprintHjelper hjelper = new FingerprintHjelper(this);
@@ -117,7 +123,7 @@ public class FingerprintActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if(oktnokkel) {
                     parGenerator.initialize(
-                            new KeyGenParameterSpec.Builder((name == null) ? KEYNAME+"okt" : name,
+                            new KeyGenParameterSpec.Builder((name == null) ? KEYNAME+"_okt" : name,
                                 KeyProperties.PURPOSE_SIGN)
                                 .setDigests(KeyProperties.DIGEST_SHA256)
                                 .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))

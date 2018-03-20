@@ -40,7 +40,7 @@ public class StartOkt extends StringRequest {
         super(Request.Method.POST, LOGGINNURL, listener, null);
 
         this.kontekst = con;
-        FingerprintActivity.genererNokler(okt);
+        FingerprintActivity.genererNokler(okt, true);
         byte[] encodedString = null;
         KeyStore keyStore = null;
         PublicKey offentligNokkel = null;
