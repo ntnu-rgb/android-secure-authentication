@@ -20,4 +20,6 @@
     <string name="manglerfingeravtrykk">Legg inn minst ett fingeravtrykk på enheten før du fortsetter. Dette gjøres via instillinger på telefonen.</string>
     <string name="feil">En feil har oppstått. Vennligst prøv å starte applikasjonen på nytt.</string>
     <string name="autentiseringsfeil">Autentisering feilet. Vennligst prøv igjen</string>
+    <string name="ikkeTilgangTilNokkel">Feil ved uthenting av nøkkel</string>
+    <string name="feilVedSignering">Feil ved signering</string>
 </resources>

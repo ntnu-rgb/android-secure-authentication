@@ -1,6 +1,7 @@
 package com.example.applikasjon;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Base64;
@@ -48,14 +49,15 @@ public class StartOkt extends StringRequest {
         try {
             keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
-            offentligNokkel =
-                    keyStore.getCertificate(okt).getPublicKey();
-            offentligNokkel =
-                    keyStore.getCertificate(okt).getPublicKey();
-            cert = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(keyStore.getCertificate(okt).getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
+            offentligNokkel = keyStore.getCertificate(okt).getPublicKey();
+            cert = "-----BEGIN PUBLIC KEY-----\n"+Base64.encodeToString(keyStore.getCertificate(okt).getPublicKey().getEncoded(), Base64.DEFAULT)+"-----END PUBLIC KEY-----";
 
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e ) {
-            MainActivity.visFeilMelding("Feil ved serverkommunikasjon", con);
+            MainActivity.uuid = null;
+            SharedPreferences.Editor editor = MainActivity.pref.edit();
+            editor.putString(con.getString(R.string.lagret_uuid), MainActivity.uuid);
+            editor.commit();
+            MainActivity.visFeilMelding(con.getString(R.string.ikkeTilgangTilNokkel), con);
         }
         Signature signatur = null;
         PrivateKey priv = null;
@@ -68,7 +70,11 @@ public class StartOkt extends StringRequest {
             byte[] signaturBytes = signatur.sign();
             sig =  (Base64.encodeToString(verificationKey.getEncoded(), Base64.DEFAULT));
         } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException | SignatureException e) {
-            MainActivity.visFeilMelding("Feil ved serverkommunikasjon", con);
+            MainActivity.uuid = null;
+            SharedPreferences.Editor editor = MainActivity.pref.edit();
+            editor.putString(con.getString(R.string.lagret_uuid), MainActivity.uuid);
+            editor.commit();
+            MainActivity.visFeilMelding(con.getString(R.string.feilVedSignering), con);
         }
         parametere = new HashMap<>();
         parametere.put("start_okt", "true");
