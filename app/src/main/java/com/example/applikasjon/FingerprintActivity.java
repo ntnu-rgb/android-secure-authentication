@@ -97,7 +97,7 @@ public class FingerprintActivity extends AppCompatActivity {
      * Funksjon for å generere asymmetriske nøkler
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public static void genererNokler(String name) {
+    public static void genererNokler(String name, Boolean oktnokkel) {
 
         try {
             fNokkel = KeyStore.getInstance("AndroidKeyStore");  //Last inn en android keystore instance
@@ -115,14 +115,24 @@ public class FingerprintActivity extends AppCompatActivity {
         try {
             fNokkel.load(null);                                 //Last inn keystore
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                parGenerator.initialize(
-                        new KeyGenParameterSpec.Builder((name == null) ? KEYNAME : name,
+                if(oktnokkel) {
+                    parGenerator.initialize(
+                            new KeyGenParameterSpec.Builder((name == null) ? KEYNAME+"okt" : name,
                                 KeyProperties.PURPOSE_SIGN)
                                 .setDigests(KeyProperties.DIGEST_SHA256)
                                 .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
-                                .setUserAuthenticationRequired(true)
-                                .setUserAuthenticationValidityDurationSeconds(-1)
                                 .build());
+                }
+                else {
+                    parGenerator.initialize(
+                            new KeyGenParameterSpec.Builder((name == null) ? KEYNAME : name,
+                                    KeyProperties.PURPOSE_SIGN)
+                                    .setDigests(KeyProperties.DIGEST_SHA256)
+                                    .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
+                                    .setUserAuthenticationRequired(true)
+                                    .setUserAuthenticationValidityDurationSeconds(-1)
+                                    .build());
+                }
             }
             KeyPair par = parGenerator.generateKeyPair();
 
@@ -144,4 +154,8 @@ public class FingerprintActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    @Override
+    public void onBackPressed() {
+        //Ikke gjør noe
+    }
 }

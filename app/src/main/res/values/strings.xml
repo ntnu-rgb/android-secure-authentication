@@ -3,9 +3,10 @@
     <string name="action_logginn">Logg inn</string>
     <string name="hint_epostadresse">Skriv inn epostadresse</string>
     <string name="tittel_registrering">Registrering</string>
-    <string name="action_registrer"> Registrer </string>
+    <string name="action_registrer">Ingen bruker? Trykk her for å registrere deg.</string>
+    <string name="registrer_knapp">Registrer</string>
     <string name="hint_passord">Skriv inn passord her</string>
-    <string name="fingerAvtrykk"> Plasser fingeren på mobilen sin fingeravtrykk-leser</string>
+    <string name="fingerAvtrykk">Plasser fingeren på mobilen sin fingeravtrykk-leser</string>
     <item name="visible" type="id" />
     <item name="masked" type="id" />
     <string name="title_activity_registrer_foresporsel">RegistrerForesporsel</string>
