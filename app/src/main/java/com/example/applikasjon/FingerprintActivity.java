@@ -34,6 +34,9 @@ public class FingerprintActivity extends AppCompatActivity {
 
 
     public static KeyStore fNokkel;
+    public static KeyPair permpar = null;
+    public static String pemOktKey = null;
+    public static KeyPair oktpar = null;
     public static final String KEYNAME = "NOKKEL";
     public static KeyPairGenerator parGenerator;
     private Signature signatur;
@@ -67,29 +70,41 @@ public class FingerprintActivity extends AppCompatActivity {
             MainActivity.visFeilMelding(this.getString(R.string.internettfeil), this);
         }
         else { //Generer asymmetriske nøkler
-            genererNokler(null);
-            if (initSignatur()) {
+
+            if (MainActivity.uuid == null) { //Sjekker om brukeren har gjennomført førstegangsautentisering
+                genererNokler(null);
+            }
+            genererNokler("OktNokkel");
+
+
+            if ((initSignatur(KEYNAME)) != null) {
                 FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
                 FingerprintHjelper hjelper = new FingerprintHjelper(this);
+                try {
+                    pemOktKey = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(fNokkel.getCertificate("OktNokkel").getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
+
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                }
+
                 hjelper.startAutentisering(fManager, cObjekt);
             }
         }
     }
 
 
-    private boolean initSignatur() {
+    private Signature initSignatur(String nokkelnavn) {
         try {
             //Initialiser signaturen ved hjelp av privatnøkkelen
             fNokkel.load(null);
             signatur = Signature.getInstance("SHA256withECDSA");
-            PrivateKey priv = (PrivateKey) fNokkel.getKey(KEYNAME, null);
+            PrivateKey priv = (PrivateKey) fNokkel.getKey(nokkelnavn, null);
             signatur.initSign(priv);
-            return true;
 
         } catch (NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
             MainActivity.visFeilMelding(this.getString(R.string.feil), this);
         }
-       return false;
+       return signatur;
     }
 
 
@@ -98,7 +113,6 @@ public class FingerprintActivity extends AppCompatActivity {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void genererNokler(String name) {
-
         try {
             fNokkel = KeyStore.getInstance("AndroidKeyStore");  //Last inn en android keystore instance
         } catch (KeyStoreException e) {
@@ -115,22 +129,31 @@ public class FingerprintActivity extends AppCompatActivity {
         try {
             fNokkel.load(null);                                 //Last inn keystore
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                parGenerator.initialize(
-                        new KeyGenParameterSpec.Builder((name == null) ? KEYNAME : name,
+                if (name == null) {  //null = generer det permanente paret
+                    parGenerator.initialize(
+                            new KeyGenParameterSpec.Builder(KEYNAME,
+                                    KeyProperties.PURPOSE_SIGN)
+                                    .setDigests(KeyProperties.DIGEST_SHA256)
+                                    .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
+                                    .setUserAuthenticationRequired(true)
+                                    .setUserAuthenticationValidityDurationSeconds(-1)
+                                    .build());
+                    permpar = parGenerator.generateKeyPair();
+                }
+                else { //generer øktparet
+                    parGenerator.initialize(
+                        new KeyGenParameterSpec.Builder(name,
                                 KeyProperties.PURPOSE_SIGN)
                                 .setDigests(KeyProperties.DIGEST_SHA256)
                                 .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
-                                .setUserAuthenticationRequired(true)
-                                .setUserAuthenticationValidityDurationSeconds(-1)
+                                .setUserAuthenticationRequired(false)
                                 .build());
+                    oktpar = parGenerator.generateKeyPair();
+                }
             }
-            KeyPair par = parGenerator.generateKeyPair();
-
         } catch (IOException | NoSuchAlgorithmException | CertificateException | InvalidAlgorithmParameterException e) {
             Log.d("FEIL", "Kunne ikke generere nøkler i FingerprintActivity");  //TODO: Fjern før ferdigstilling
         }
-
-
     }
     /**
      * Sjekker om man har en aktiv tilkobling til internett
@@ -143,5 +166,4 @@ public class FingerprintActivity extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
 }

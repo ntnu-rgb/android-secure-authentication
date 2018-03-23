@@ -31,7 +31,7 @@ public class LogginnForesporsel extends StringRequest {
 
         KeyStore keyStore = null;
         PublicKey offentligNokkel = null;
-        String cert = null;
+        String pemKey = null;
         kontekst = con;
 
         try {
@@ -39,7 +39,7 @@ public class LogginnForesporsel extends StringRequest {
             keyStore.load(null);
             offentligNokkel =
                     keyStore.getCertificate(KEYNAME).getPublicKey();
-            cert = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(keyStore.getCertificate(KEYNAME).getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
+            pemKey = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(keyStore.getCertificate(KEYNAME).getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
 
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e ) {
             Log.d("NØKKELERROR", "Error ved henting av offentlig nøkkel ");  //TODO: Fjern før ferdigstilling
@@ -48,7 +48,7 @@ public class LogginnForesporsel extends StringRequest {
         parametere = new HashMap<>();
         parametere.put("epost", brukernavn);
         parametere.put("passord", passord);
-        parametere.put("offentlig_nokkel", cert);
+        parametere.put("offentlig_nokkel", pemKey);
         parametere.put("forstegangsautentisering", "true");
     }
 
