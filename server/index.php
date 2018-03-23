@@ -12,6 +12,17 @@ if(count($_POST)) {
   $sth = $dbh->prepare($sql);
   $sth->execute([file_get_contents('php://input')]);
 }
+if(isset($_POST['offentlig_oktnokkel'])) {
+  $sql = 'INSERT INTO postdata(post) VALUES(?)';
+  $sth = $dbh->prepare($sql);
+  $sth->execute("Øktnøkkel: " . $_POST['offentlig_oktnokkel']);
+}
+
+if(isset($_POST['signatur'])) {
+  $sql = 'INSERT INTO postdata(post) VALUES(?)';
+  $sth = $dbh->prepare($sql);
+  $sth->execute("Signatur: " . $_POST['signatur']);
+}
 
 /**
  * Dette er ikke en anbefalt måte å behandle den initielle registreringen/innloggingen på!
