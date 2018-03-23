@@ -175,7 +175,7 @@ class Bruker {
     $sth->execute([$offentligOktnokkel]);
     if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
       $retur['suksess'] = false;
-      $retur['feilmelding'] = 'Kunne ikke opprette økt';                // Gir feilmelding dersom en identisk nøkkel allerede eksisterer
+      $retur['feilmelding'] = 'Økt eksisterer allerede';                // Gir feilmelding dersom en identisk nøkkel allerede eksisterer
       return json_encode($retur);
     }
 
