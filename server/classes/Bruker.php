@@ -187,11 +187,7 @@ class Bruker {
     $maks = $sth->fetch(PDO::FETCH_ASSOC)['maks'];
     $nummer = ($maks != null) ? $maks + 1 : 1;
 
-    // TODO: Debug
-    $retur['oktNr'] = $nummer;                                        // Returnerer øktnummeret og utløpstidspunkt
-    $retur['utloper'] = $utloper;
-
-    $sql = 'INSERT INTO okt(nr, nokkel,	nokkelsignatur, offentlig_oktnokkel, utloper) VALUES(?, ?, ?, ?)';
+    $sql = 'INSERT INTO okt(nr, nokkel,	nokkelsignatur, offentlig_oktnokkel, utloper) VALUES(?, ?, ?, ?, ?)';
     $sth = $this->dbh->prepare($sql);                                   // Setter økt-nøkkelen inn i databasen
     $sth->execute([$nummer, $uuid, $signatur, $offentligOktnokkel, $utloper]);
     if($sth->rowCount() == 1) {
