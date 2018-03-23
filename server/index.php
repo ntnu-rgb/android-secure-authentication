@@ -15,13 +15,12 @@ if(count($_POST)) {
 if(isset($_POST['offentlig_oktnokkel'])) {
   $sql = 'INSERT INTO postdata(post) VALUES(?)';
   $sth = $dbh->prepare($sql);
-  $sth->execute("Øktnøkkel: " . $_POST['offentlig_oktnokkel']);
+  $sth->execute($_POST['offentlig_oktnokkel']);
 }
-
 if(isset($_POST['signatur'])) {
   $sql = 'INSERT INTO postdata(post) VALUES(?)';
   $sth = $dbh->prepare($sql);
-  $sth->execute("Signatur: " . $_POST['signatur']);
+  $sth->execute($_POST['signatur']);
 }
 
 /**
