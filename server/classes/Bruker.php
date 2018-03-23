@@ -155,8 +155,8 @@ class Bruker {
       return json_encode($retur);                                       // Returnerer feilmelding dersom offentlig nøkkel ikke ble funnet
     }
  
-    $signatur = base64_decode($signatur);
-    if(openssl_verify($offentligOktnokkel, $signatur, $nokkel, OPENSSL_ALGO_SHA256) !== 1) { // Sjekker om signaturen stemmer
+    $binSignatur = base64_decode($signatur);
+    if(openssl_verify($offentligOktnokkel, $binSignatur, $nokkel, OPENSSL_ALGO_SHA256) !== 1) { // Sjekker om signaturen stemmer
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Ugyldig signatur';
       openssl_free_key($nokkel);
@@ -176,7 +176,7 @@ class Bruker {
       return json_encode($retur);
     }
 
-    $utloper = date('Y:m:d H:i:s', strtotime('+1 hour'));               // TODO: Hvor lenge skal den være gyldig?
+    $utloper = date('Y:m:d H:i:s', strtotime('+10 minutes'));               // TODO: Hvor lenge skal den være gyldig?
 
     $sql = 'SELECT MAX(nr) AS maks FROM okt WHERE nokkel = ?';          // Finner neste økt-nummer i rekken for angitt nøkkel
     $sth = $this->dbh->prepare($sql);
@@ -184,9 +184,9 @@ class Bruker {
     $maks = $sth->fetch(PDO::FETCH_ASSOC)['maks'];
     $nummer = ($maks != null) ? $maks + 1 : 1;
 
-    $sql = 'INSERT INTO okt(nr, nokkel, offentlig_oktnokkel, utloper) VALUES(?, ?, ?, ?)';
+    $sql = 'INSERT INTO okt(nr, nokkel,	nokkelsignatur, offentlig_oktnokkel, utloper) VALUES(?, ?, ?, ?)';
     $sth = $this->dbh->prepare($sql);                                   // Setter økt-nøkkelen inn i databasen
-    $sth->execute([$nummer, $uuid, $offentligOktnokkel, $utloper]);
+    $sth->execute([$nummer, $uuid, $signatur, $offentligOktnokkel, $utloper]);
     if($sth->rowCount() == 1) {
       $retur['suksess'] = true;
       $retur['oktNr'] = $nummer;                                        // Returnerer øktnummeret og utløpstidspunkt
@@ -204,20 +204,19 @@ class Bruker {
    * 
    * @param string $uuid Id til nøkkelparet.
    * @param int $oktNr Identifikator for økten (sammen med UUID til nøkkelparet).
-   * @param string $handlingsdata En JSON-kodet tekst med data tilknyttet handlingen.
-   * @param int $nonce Et engangsnummer som skal forekomme maks 1 gang per økt
-   * @param string $signatur En base64-kodet signatur av nonce'en, signert med den private øktnøkkelen.
+   * @param string $transaksjon En JSON-kodet tekst med data tilknyttet handlingen.
+   * @param string $signatur En base64-kodet signatur av transaksjonen, signert med den private øktnøkkelen.
    * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
    */
-  public function utforHandling($uuid, $oktNr, $handlingsdata, $nonce, $signatur) {
+  public function utforHandling($uuid, $oktNr, $transaksjon, $signatur) {
     $retur = [];
 
-    $sql = 'SELECT COUNT(*) AS antall FROM nonce WHERE nokkel = ? AND oktNr = ? AND nonce = ?';
+    $sql = 'SELECT COUNT(*) AS antall FROM transaksjon WHERE nokkel = ? AND oktNr = ? AND transaksjonssignatur = ?';
     $sth = $this->dbh->prepare($sql);                                   // Sjekker at nonce ikke er mottatt tidligere
-    $sth->execute([$uuid, $oktNr, $nonce]);
+    $sth->execute([$uuid, $oktNr, $signatur]);
     if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
       $retur['suksess'] = false;
-      $retur['feilmelding'] = 'Nonce allerede brukt';
+      $retur['feilmelding'] = 'Transaksjon er allerede gjennomført';
       return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke er unik for økten
     } 
 
@@ -234,8 +233,8 @@ class Bruker {
       return json_encode($retur);                                       // Returnerer feilmelding dersom offentlig øktnøkkel ikke ble funnet
     }
 
-    $signatur = base64_decode($signatur);
-    if(openssl_verify($nonce, $signatur, $nokkel, OPENSSL_ALGO_SHA256) !== 1) { // Sjekker om signaturen stemmer
+    $binSignatur = base64_decode($signatur);
+    if(openssl_verify($transaksjon, $binSignatur, $nokkel, OPENSSL_ALGO_SHA256) !== 1) { // Sjekker om signaturen stemmer
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Ugyldig signatur';
       openssl_free_key($nokkel);
@@ -245,16 +244,16 @@ class Bruker {
       openssl_free_key($nokkel);                                        // Frigjør OpenSSL nøkkel-objektet
     }
 
-    $sql = 'INSERT INTO nonce(nokkel, oktNr, nonce) VALUES(?, ?, ?)';   // Lagrer unna nonce
+    $sql = 'INSERT INTO transaksjon(nokkel, oktNr, transaksjonssignatur, transaksjon) VALUES(?, ?, ?, ?)';   // Lagrer unna nonce
     $sth = $this->dbh->prepare($sql);
-    $sth->execute([$uuid, $oktNr, $nonce]);
+    $sth->execute([$uuid, $oktNr, $signatur, $transaksjon]);
     if($sth->rowCount() !== 1) {                                        // Sjekker at nonce ble lagret
       $retur['suksess'] = false;
-      $retur['feilmelding'] = 'Kunne ikke lagre ny nonce';
+      $retur['feilmelding'] = 'Kunne ikke lagre transaksjon';
       return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke kunne lagres
     }
 
-    $handling = json_decode($handlingsdata, true);
+    $handling = json_decode($transaksjon, true);
 
     // Gjør handling
 

@@ -44,9 +44,10 @@ CREATE TABLE IF NOT EXISTS `bruker` (
 
 CREATE TABLE IF NOT EXISTS `nokkel` (
   `uuid` char(23) NOT NULL,
-  `offentlig_nokkel` tinytext NOT NULL,
+  `offentlig_nokkel` varchar(255) NOT NULL,
   `bruker` bigint(20) UNSIGNED NOT NULL,
   PRIMARY KEY(uuid),
+  UNIQUE(offentlig_nokkel),
   FOREIGN KEY(bruker) REFERENCES bruker(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -58,9 +59,11 @@ CREATE TABLE IF NOT EXISTS `nokkel` (
 CREATE TABLE IF NOT EXISTS `okt` (
   `nr` int UNSIGNED NOT NULL,
   `nokkel` CHAR(23) NOT NULL,
-  `offentlig_oktnokkel` tinytext NOT NULL,
-  `utloper` datetime NULL,
-  PRIMARY KEY(nr, nokkel),
+  `nokkelsignatur` varchar(255) NOT NULL,
+  `offentlig_oktnokkel` varchar(255) NOT NULL,
+  `utloper` datetime NOT NULL,
+  PRIMARY KEY(nr, nokkel, nokkelsignatur),
+  UNIQUE(offentlig_oktnokkel),
   FOREIGN KEY(nokkel) REFERENCES nokkel(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -70,11 +73,12 @@ CREATE TABLE IF NOT EXISTS `okt` (
 -- Tabellstruktur for tabell `nonce`
 --
 
-CREATE TABLE IF NOT EXISTS `nonce` (
+CREATE TABLE IF NOT EXISTS `transaksjon` (
   `nokkel` CHAR(23) NOT NULL,
   `oktNr` int UNSIGNED NOT NULL,
-  `nonce` BIGINT(20) NOT NULL,
-  PRIMARY KEY(nokkel, oktNr, nonce),
+  `transaksjonssignatur` varchar(255) NOT NULL,
+  `transaksjon` text NOT NULL,
+  PRIMARY KEY(nokkel, oktNr, transaksjonssignatur),
   FOREIGN KEY(nokkel) REFERENCES nokkel(uuid),
   FOREIGN KEY(oktNr) REFERENCES okt(nr)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
