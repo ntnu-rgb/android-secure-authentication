@@ -11,7 +11,13 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
 import android.util.Log;
+
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.Signature;
 import java.security.SignatureException;
@@ -58,18 +64,37 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
             Response.Listener<String> respons = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.d("RESPONS", ""+resultat);
+                    JSONObject jsonRespons = null;
+                    try {
+                        jsonRespons = new JSONObject(response);
+                        boolean suksess = jsonRespons.getBoolean("suksess");
+
+                        if (suksess) {
+                            Log.d("OKT", "SUKSESS");
+
+                        }
+                        else {
+                            MainActivity.visFeilMelding(jsonRespons.getString("feilmelding"), kontekst);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();  //TODO: Fjern før ferdigstilling
+
+                    }
                 }
             };
             Signature signatur = kryptOb.getSignature();
             try {
-                signatur.update(Byte.parseByte(FingerprintActivity.pemOktKey)); //TODO: VERIFY
+                byte[] forSigning = FingerprintActivity.pemOktKey.getBytes();
+                signatur.update(forSigning); //TODO: VERIFY
                 byte[] signert = signatur.sign();
                 pemSign = Base64.encodeToString(signert, Base64.DEFAULT);
             } catch (SignatureException e) {
                 e.printStackTrace();
             }
             okt = new StartOkt(uuid, pemSign, respons, this.kontekst);
+            RequestQueue queue = Volley.newRequestQueue(this.kontekst);
+            queue.add(okt);
+
         }
     }
 

@@ -5,6 +5,8 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Base64;
+import android.util.Log;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -62,13 +64,8 @@ public class StartOkt extends StringRequest {
         parametere = new HashMap<>();
         parametere.put("start_okt", "true");
         parametere.put("uuid", uuid);
-        parametere.put("offentlig_nokkel", cert);
+        parametere.put("offentlig_oktnokkel", cert);
         parametere.put("signatur", pemSign);
-        try {
-            parametere.put("signatur", Base64.encodeToString(FingerprintHjelper.kryptOb.getSignature().sign(), Base64.DEFAULT));
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        }
 
     }
 
