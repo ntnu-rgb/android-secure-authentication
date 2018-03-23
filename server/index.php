@@ -7,14 +7,10 @@ $dbh = DB::hentDB();
 $bruker = new Bruker($dbh);
 
 /** TODO: Fjern disse 10 linjene, kun til debugging */
-$sql = 'INSERT INTO postdata(post) VALUES(?)';
-$sth = $dbh->prepare($sql);
-$sth->execute([file_get_contents('php://input')]);
-
-if(isset($_POST['offentlig_nokkel'])) {
+if(count($_POST)) {
   $sql = 'INSERT INTO postdata(post) VALUES(?)';
   $sth = $dbh->prepare($sql);
-  $sth->execute([$_POST['offentlig_nokkel']]);
+  $sth->execute([file_get_contents('php://input')]);
 }
 
 /**
@@ -38,8 +34,8 @@ if(isset($_POST['forstegangsautentisering'], $_POST['epost'], $_POST['passord'],
 else if(isset($_POST['start_okt'], $_POST['uuid'], $_POST['offentlig_oktnokkel'], $_POST['signatur'])) {
   echo $bruker->startOkt($_POST['uuid'], $_POST['offentlig_oktnokkel'], $_POST['signatur']);                  // Start økt
 }
-else if(isset($_POST['uuid'], $_POST['oktNr'], $_POST['handlingsdata'], $_POST['signatur'])) {
-  echo $bruker->utforHandling($_POST['uuid'], $_POST['oktNr'], $_POST['handlingsdata'], $_POST['nonce'], $_POST['signatur']);  // Utfør handling i økt
+else if(isset($_POST['uuid'], $_POST['oktNr'], $_POST['transaksjon'], $_POST['signatur'])) {
+  echo $bruker->utforHandling($_POST['uuid'], $_POST['oktNr'], $_POST['transaksjon'], $_POST['signatur']);  // Utfør handling i økt
 }
 else if(isset($_POST['registrer'], $_POST['epost'], $_POST['passord'])) {
   echo $bruker->registrer($_POST['epost'], $_POST['passord']);                                                // Registrer bruker
