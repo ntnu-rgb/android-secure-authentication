@@ -4,17 +4,17 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.CancellationSignal;
-import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 import android.util.Log;
 import com.android.volley.Response;
 
-import java.io.Serializable;
+import java.security.Signature;
+import java.security.SignatureException;
 
 import static com.example.applikasjon.MainActivity.uuid;
 
@@ -22,6 +22,9 @@ import static com.example.applikasjon.MainActivity.uuid;
 class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
 
     private Context kontekst;
+    public static FingerprintManager.CryptoObject kryptOb;
+    private StartOkt okt = null;
+    private String pemSign;
 
     FingerprintHjelper(Context kon) {
         this.kontekst = kon;
@@ -30,6 +33,7 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
     public void startAutentisering(FingerprintManager fManager, FingerprintManager.CryptoObject cObject) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             CancellationSignal cSignal = new CancellationSignal();
+            settKryptoObjekt(cObject);
             if (ActivityCompat.checkSelfPermission(this.kontekst, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
                 return;                                                                                                                             //Avslutt
             }
@@ -44,24 +48,30 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
     @Override  //Hvis autentiseringen er godkjent
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult resultat) {
         super.onAuthenticationSucceeded(resultat);                                                          //Kall parentfunksjonen
-        StartOkt okt = null;
-        //Sender til innlogging hvis uuid ikke finnes
+        //StartOkt okt = null;
+        //Sender til innlogging hvis uuid ikke finnes (førstegangsautentisering er ikke gjennomført)
         if (uuid == null) {
             kontekst.startActivity(new Intent(kontekst, LogginnActivity.class));
         }
 
         else {
             Response.Listener<String> respons = new Response.Listener<String>() {
-
                 @Override
                 public void onResponse(String response) {
-                    Log.d("RESPONS", "RESPONS");
+                    Log.d("RESPONS", ""+resultat);
                 }
             };
-            okt = new StartOkt(uuid, respons, this.kontekst);
-
+            Signature signatur = kryptOb.getSignature();
+            try {
+                signatur.update(Byte.parseByte(FingerprintActivity.pemOktKey)); //TODO: VERIFY
+                byte[] signert = signatur.sign();
+                pemSign = Base64.encodeToString(signert, Base64.DEFAULT);
+            } catch (SignatureException e) {
+                e.printStackTrace();
+            }
+            okt = new StartOkt(uuid, pemSign, respons, this.kontekst);
         }
-         }
+    }
 
     @Override  //Hvis autentiseringen feilet
     public void onAuthenticationFailed() {
@@ -69,4 +79,10 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
         MainActivity.visFeilMelding(this.kontekst.getString(R.string.autentiseringsfeil), this.kontekst);     //Vis feilmelding
         return;
     }
+
+    private void settKryptoObjekt(FingerprintManager.CryptoObject cr) {
+        this.kryptOb = cr;
+    }
+
+
 }
