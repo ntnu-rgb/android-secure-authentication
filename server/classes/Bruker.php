@@ -157,6 +157,9 @@ class Bruker {
  
     $binSignatur = base64_decode($signatur);
     if(openssl_verify($offentligOktnokkel, $binSignatur, $nokkel, OPENSSL_ALGO_SHA256) !== 1) { // Sjekker om signaturen stemmer
+      if(openssl_verify($offentligOktnokkel, $binSignatur, $nokkel, OPENSSL_ALGO_SHA256) === -1) {
+        $retur['openssl_error'] = openssl_error_string();
+      }
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Ugyldig signatur';
       openssl_free_key($nokkel);
