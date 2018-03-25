@@ -12,6 +12,10 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+/**
+ * Klasse som håndterer registrering av en bruker
+ */
 public class RegistrerActivity extends AppCompatActivity {
 
     @Override
@@ -24,6 +28,7 @@ public class RegistrerActivity extends AppCompatActivity {
         final EditText pass = (EditText) findViewById(R.id.passord);
         final Button bRegistrer = (Button) findViewById(R.id.registrerOk);
 
+        //Setter opp en clicklistener som utfører registreringen når knappen blir trykket på
         bRegistrer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -37,12 +42,11 @@ public class RegistrerActivity extends AppCompatActivity {
                             jsonRespons = new JSONObject(respons);
                             boolean suksess = jsonRespons.getBoolean("suksess");
 
-                            if (suksess) {
+                            if (suksess) { //Hvis serveren har returnert suksess starter innloggingen
                                Intent intent = new Intent(RegistrerActivity.this, LogginnActivity.class);
                                 RegistrerActivity.this.startActivity(intent);
-
                             }
-                            else {
+                            else { //Hvis serveren returnerer suksess=false vises en feilmelding
                                 MainActivity.visFeilMelding(jsonRespons.getString("Feilmelding"), RegistrerActivity.this);
                             }
                         } catch (JSONException e) {
@@ -51,6 +55,7 @@ public class RegistrerActivity extends AppCompatActivity {
                         }
                     }
                 };
+                //Setter opp en forespørsel som skal sendes til serveren via Volley
                 RegistrerForesporsel regForesporsel = new RegistrerForesporsel(bnavn, passord, respons);
                 RequestQueue queue = Volley.newRequestQueue(RegistrerActivity.this);             //Legg inn forespørselen i køen for å kjøre den
                 queue.add(regForesporsel);

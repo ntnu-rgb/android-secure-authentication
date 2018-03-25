@@ -2,12 +2,10 @@ package com.example.applikasjon;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -18,7 +16,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
+/**
+ * Klasse som håndterer innlogging av bruker
+ */
 public class LogginnActivity extends AppCompatActivity {
 
     // UI references.
@@ -49,20 +49,12 @@ public class LogginnActivity extends AppCompatActivity {
                         public void onResponse(String response) {
                             try {
                                 JSONObject jsonRespons = new JSONObject(response);
-                                boolean suksess = jsonRespons.getBoolean("suksess");
-                                Log.d("RESPONS", "UTHENTET" + response);             //TODO: Fjern før ferdigstilling
-
+                                boolean suksess = jsonRespons.getBoolean("suksess");  //Henter ut verdien som sier om forespørselen var vellykket eller ikke
                                 if (suksess) {
                                     String uuid = jsonRespons.getString("uuid");
-                                    //Setter i gang editor for å lagre uuid
-                                    Log.d("SERVERSVAR", jsonRespons.toString());
-
-                                    SharedPreferences.Editor editor = MainActivity.pref.edit();
-                                    editor.putString(getString(R.string.lagret_uuid), uuid);
-                                    editor.commit();
-
+                                    //Lagrer uuid
+                                    MainActivity.setUuid(uuid);
                                     AlertDialog.Builder riktig = new AlertDialog.Builder(LogginnActivity.this);
-
                                     riktig.setMessage("Riktig innlogging").setNegativeButton("Overfør til neste vindu", null).create().show();
 
                                     Intent intent = new Intent(LogginnActivity.this, StartOkt.class); //TODO: Erstatt null med det logginn viderefører til
@@ -71,10 +63,10 @@ public class LogginnActivity extends AppCompatActivity {
                                 }
                             } catch (JSONException e) {
                                 MainActivity.visFeilMelding("Feil ved lesing av serverdata", LogginnActivity.this);
-                                Log.d("JSONFEIL", "JSON kunne ikke leses");  //TODO: Fjern før ferdigstilling
                             }
                         }
                     };
+                    //Setter opp en forespørsel som skal sendes til serveren via Volley
                     LogginnForesporsel foresporsel = new LogginnForesporsel(brukernavn, pass, respons, LogginnActivity.this);
                     RequestQueue queue = Volley.newRequestQueue(LogginnActivity.this);
                     queue.add(foresporsel);

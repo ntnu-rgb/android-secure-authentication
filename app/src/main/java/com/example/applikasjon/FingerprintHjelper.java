@@ -24,26 +24,37 @@ import java.security.SignatureException;
 
 import static com.example.applikasjon.MainActivity.uuid;
 
+
+/**
+ * Klasse som håndterer fingeravtrykkautentiseringen
+ */
 @RequiresApi(api = Build.VERSION_CODES.M)
 class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
 
     private Context kontekst;
     public static FingerprintManager.CryptoObject kryptOb;
     private StartOkt okt = null;
-    private String pemSign;
+    public static String pemSign;
+    public static String OktNr;
 
     FingerprintHjelper(Context kon) {
         this.kontekst = kon;
     }
 
+
+    /**
+     * Funksjon for å autentisere brukeren for klienten
+     * @param fManager FingerprintManager Håndterer aksess til fingeravtrykkshardware.
+     * @param cObject CryptoObject Wrapper for krypterings APIer.
+     */
     public void startAutentisering(FingerprintManager fManager, FingerprintManager.CryptoObject cObject) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            CancellationSignal cSignal = new CancellationSignal();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) { //Sjekker at dette kallet er støttet av enheten som kjører programmet
+            CancellationSignal cSignal = new CancellationSignal();     //Setter opp cancellationsignal til bruk av authenticate funksjonen
             settKryptoObjekt(cObject);
-            if (ActivityCompat.checkSelfPermission(this.kontekst, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-                return;                                                                                                                             //Avslutt
+            if (ActivityCompat.checkSelfPermission(this.kontekst, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) { //Sjekker at riktige permissions er gitt
+                return;                                                                                                                        //Avslutt
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { //Sjekker at dette kallet er støttet av enheten som kjører programmet
                 fManager.authenticate(cObject, cSignal, 0 , this, null);
             }
             else return;
@@ -53,7 +64,7 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
 
     @Override  //Hvis autentiseringen er godkjent
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult resultat) {
-        super.onAuthenticationSucceeded(resultat);                                                          //Kall parentfunksjonen
+        super.onAuthenticationSucceeded(resultat);                                  //Kall parentfunksjonen
         //StartOkt okt = null;
         //Sender til innlogging hvis uuid ikke finnes (førstegangsautentisering er ikke gjennomført)
         if (uuid == null) {
@@ -70,11 +81,12 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
                         boolean suksess = jsonRespons.getBoolean("suksess");
 
                         if (suksess) {
-                            Log.d("OKT", "SUKSESS");
-
+                            OktNr = jsonRespons.getString("oktNr");
+                            Intent regIntent = new Intent(kontekst, UtforHandlingActivity.class);
+                            kontekst.startActivity(regIntent);
                         }
                         else {
-                            MainActivity.visFeilMelding(jsonRespons.getString("feilmelding"), kontekst);
+                            MainActivity.visFeilMelding(jsonRespons.toString(), kontekst);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();  //TODO: Fjern før ferdigstilling

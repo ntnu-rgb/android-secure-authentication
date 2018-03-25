@@ -24,7 +24,7 @@ android {
 
 repositories {
     google()
-    jcenter({url "http://jcenter.bintray.com/"})
+    jcenter({ url "http://jcenter.bintray.com/" })
 }
 
 dependencies {
@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     compile 'com.android.volley:volley:1.0.0'
 }
+
 
 buildscript {
     dependencies {

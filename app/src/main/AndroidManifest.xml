@@ -4,20 +4,16 @@
 
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> //Brukt for å gi felmelding hvis man ikke har internettilkobling
-
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    //Brukt for å gi felmelding hvis man ikke har internettilkobling
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:networkSecurityConfig="@xml/network_security_config"
-
-        >
-
+        android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +31,10 @@
             android:name=".FingerprintActivity"
             android:label="Fingerprint Autentisering" />
         <activity
+            android:name=".UtforHandlingActivity"
+            android:label="@string/title_activity_utfor_handling"
+            android:theme="@style/AppTheme"></activity>
+        <activity
             android:name=".RegistrerForesporsel"
             android:label="@string/title_activity_registrer_foresporsel" />
         <activity
@@ -43,7 +43,8 @@
         <activity
             android:name=".StartOkt"
             android:label="@string/title_activity_start_okt"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+
     </application>
 
 </manifest>

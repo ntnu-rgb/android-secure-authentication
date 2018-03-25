@@ -5,6 +5,9 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Klasse for å gjøre klar en registreringsforespørsel før den sendes til server
+ */
 public class RegistrerForesporsel extends StringRequest {
 
     private static final String REGISTRERINGSURL = "https://folk.ntnu.no/sturlaba/sfa/";
@@ -22,5 +25,4 @@ public class RegistrerForesporsel extends StringRequest {
     public Map<String, String> getParams(){
         return parametere;
     }
-
 }

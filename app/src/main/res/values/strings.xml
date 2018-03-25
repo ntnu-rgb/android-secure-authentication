@@ -23,4 +23,5 @@
     <string name="autentiseringsfeil">Autentisering feilet. Vennligst prøv igjen</string>
     <string name="ikkeTilgangTilNokkel">Feil ved uthenting av nøkkel</string>
     <string name="feilVedSignering">Feil ved signering</string>
+    <string name="title_activity_utfor_handling">UtforHandlingActivity</string>
 </resources>

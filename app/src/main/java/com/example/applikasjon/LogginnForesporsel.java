@@ -18,6 +18,10 @@ import java.util.Map;
 
 import static com.example.applikasjon.FingerprintActivity.KEYNAME;
 
+
+/**
+ * Klasse for å gjøre klar en innloggingsforespørsel til serveren
+ */
 public class LogginnForesporsel extends StringRequest {
 
     private static final String LOGGINNURL = "https://folk.ntnu.no/sturlaba/sfa/";
@@ -33,8 +37,7 @@ public class LogginnForesporsel extends StringRequest {
         PublicKey offentligNokkel = null;
         String pemKey = null;
         kontekst = con;
-
-        try {
+        try {  //Last inn den offentlige permanente nøkkelen og gjør det om til et format som serveren kan lese
             keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
             offentligNokkel =
@@ -42,9 +45,10 @@ public class LogginnForesporsel extends StringRequest {
             pemKey = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(keyStore.getCertificate(KEYNAME).getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
 
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e ) {
-            Log.d("NØKKELERROR", "Error ved henting av offentlig nøkkel ");  //TODO: Fjern før ferdigstilling
             MainActivity.visFeilMelding("Feil ved serverkommunikasjon", this.kontekst);
         }
+
+        //Setter alle verdiene som serveren forventer
         parametere = new HashMap<>();
         parametere.put("epost", brukernavn);
         parametere.put("passord", passord);

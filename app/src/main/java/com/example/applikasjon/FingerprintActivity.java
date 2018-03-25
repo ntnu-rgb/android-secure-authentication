@@ -32,7 +32,6 @@ import java.security.spec.ECGenParameterSpec;
 
 public class FingerprintActivity extends AppCompatActivity {
 
-
     public static KeyStore fNokkel;
     public static KeyPair permpar = null;
     public static String pemOktKey = null;
@@ -41,15 +40,12 @@ public class FingerprintActivity extends AppCompatActivity {
     public static KeyPairGenerator parGenerator;
     private Signature signatur;
 
-
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fingerprint);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -76,23 +72,25 @@ public class FingerprintActivity extends AppCompatActivity {
             }
             genererNokler("OktNokkel");
 
-
             if ((initSignatur(KEYNAME)) != null) {
                 FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
                 FingerprintHjelper hjelper = new FingerprintHjelper(this);
-                try {
+                try { //Setter opp pemOktKey på et format som kan leses av server
                     pemOktKey = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(fNokkel.getCertificate("OktNokkel").getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
 
                 } catch (KeyStoreException e) {
                     e.printStackTrace();
                 }
-
-                hjelper.startAutentisering(fManager, cObjekt);
+                hjelper.startAutentisering(fManager, cObjekt); //Sender objektene videre til autentiseringen
             }
         }
     }
 
-
+    /**
+     * Gjør klar en signatur til signering
+     * @param nokkelnavn String Navnet til nøkkelen som skal hentes ut
+     * @return Signature signatur
+     */
     private Signature initSignatur(String nokkelnavn) {
         try {
             //Initialiser signaturen ved hjelp av privatnøkkelen
