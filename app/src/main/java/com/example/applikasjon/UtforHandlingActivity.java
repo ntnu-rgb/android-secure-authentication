@@ -17,6 +17,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+
 /**
  * Klasse for å utføre en handling i en økt
  */
@@ -53,7 +55,7 @@ public class UtforHandlingActivity extends AppCompatActivity {
                             boolean suksess = jsonRespons.getBoolean("suksess");
                             if (suksess) { //Hvis serveren har returnert suksess
                                 //TODO
-                                MainActivity.visFeilMelding(jsonRespons.getString("OK!"), UtforHandlingActivity.this);
+                                MainActivity.visFeilMelding(jsonRespons.toString(), UtforHandlingActivity.this);
                             }
                             else { //Hvis serveren returnerer suksess=false vises en feilmelding
                                 MainActivity.visFeilMelding(jsonRespons.toString(), UtforHandlingActivity.this );
@@ -65,11 +67,19 @@ public class UtforHandlingActivity extends AppCompatActivity {
                     }
                 };
                 //Setter opp en forespørsel som skal sendes til serveren via Volley
-                HandlingsForesporsel hForesporsel = new HandlingsForesporsel(respons); //TODO endre parameterverdier
+                String transaksjon = opprettTransaksjon();
+                String handlingSign = FingerprintHjelper.sign(transaksjon);
+                HandlingsForesporsel hForesporsel = new HandlingsForesporsel(respons, transaksjon, handlingSign); //TODO endre parameterverdier
                 RequestQueue queue = Volley.newRequestQueue(UtforHandlingActivity.this);             //Legg inn forespørselen i køen for å kjøre den
                 queue.add(hForesporsel);
             }
         });
+    }
+
+    public String opprettTransaksjon() {
+        String handling = "TODO";
+        String tidspunkt = (Calendar.getInstance().getTime()).toString();
+        return handling+tidspunkt;
     }
 
 }

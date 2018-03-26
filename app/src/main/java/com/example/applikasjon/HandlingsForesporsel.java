@@ -17,15 +17,15 @@ public class HandlingsForesporsel extends StringRequest {
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public HandlingsForesporsel(Response.Listener<String> listener) {
+    public HandlingsForesporsel(Response.Listener<String> listener, String transak, String sign) {
         super(Request.Method.POST, HANDLINGSURL, listener, null);
 
         //Setter opp verdiene som skal sendes til server
         parametere = new HashMap<>();
         parametere.put("uuid", MainActivity.uuid);
         parametere.put("oktNr", FingerprintHjelper.OktNr);
-        parametere.put("transaksjon", "true");
-        parametere.put("signatur", FingerprintHjelper.pemSign);
+        parametere.put("transaksjon", transak);
+        parametere.put("signatur", sign);
     }
 
     @Override

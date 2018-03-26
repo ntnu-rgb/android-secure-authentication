@@ -94,7 +94,7 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
                     }
                 }
             };
-            Signature signatur = kryptOb.getSignature();
+            Signature signatur = kryptOb.getSignature();  //TODO: Endre ved å kalle sign funksjonen i stedet
             try {
                 byte[] forSigning = FingerprintActivity.pemOktKey.getBytes();
                 signatur.update(forSigning); //TODO: VERIFY
@@ -117,9 +117,27 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
         return;
     }
 
+
     private void settKryptoObjekt(FingerprintManager.CryptoObject cr) {
         this.kryptOb = cr;
     }
 
 
+    /**
+     * Funksjon for å signere en medsendt String
+     * @param skalSigneres String Det som skal signeres
+     * @return String signaturen til skalSigneres i Base64 format. Returnerer null hvis signaturen ikke kunne opprettes.
+     */
+    public static String sign(String skalSigneres) {
+        Signature signatur = kryptOb.getSignature();
+        byte[] forSigning = skalSigneres.getBytes();
+        try {
+            signatur.update(forSigning);
+            byte[] signert = signatur.sign();
+            return Base64.encodeToString(signert, Base64.DEFAULT);
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
