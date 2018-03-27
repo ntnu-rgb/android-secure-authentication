@@ -17,6 +17,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Signature;
 import java.util.Calendar;
 
 /**
@@ -58,7 +59,7 @@ public class UtforHandlingActivity extends AppCompatActivity {
                                 MainActivity.visFeilMelding(jsonRespons.toString(), UtforHandlingActivity.this);
                             }
                             else { //Hvis serveren returnerer suksess=false vises en feilmelding
-                                MainActivity.visFeilMelding(jsonRespons.toString(), UtforHandlingActivity.this );
+                                MainActivity.visFeilMelding("Utforhandling"+jsonRespons.toString(), UtforHandlingActivity.this );
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();  //TODO: Fjern før ferdigstilling
@@ -68,10 +69,16 @@ public class UtforHandlingActivity extends AppCompatActivity {
                 };
                 //Setter opp en forespørsel som skal sendes til serveren via Volley
                 String transaksjon = opprettTransaksjon();
+
                 String handlingSign = FingerprintHjelper.sign(transaksjon);
-                HandlingsForesporsel hForesporsel = new HandlingsForesporsel(respons, transaksjon, handlingSign); //TODO endre parameterverdier
-                RequestQueue queue = Volley.newRequestQueue(UtforHandlingActivity.this);             //Legg inn forespørselen i køen for å kjøre den
-                queue.add(hForesporsel);
+                if (handlingSign == null) {
+                    MainActivity.visFeilMelding("Feil ved autentisering", UtforHandlingActivity.this);
+                    }
+                else {
+                    HandlingsForesporsel hForesporsel = new HandlingsForesporsel(respons, transaksjon, handlingSign); //TODO endre parameterverdier
+                    RequestQueue queue = Volley.newRequestQueue(UtforHandlingActivity.this);             //Legg inn forespørselen i køen for å kjøre den
+                    queue.add(hForesporsel);
+                }
             }
         });
     }

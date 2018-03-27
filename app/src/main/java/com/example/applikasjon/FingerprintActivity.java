@@ -38,7 +38,7 @@ public class FingerprintActivity extends AppCompatActivity {
     public static KeyPair oktpar = null;
     public static final String KEYNAME = "NOKKEL";
     public static KeyPairGenerator parGenerator;
-    private Signature signatur;
+    public static Signature signatur;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -82,6 +82,7 @@ public class FingerprintActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 hjelper.startAutentisering(fManager, cObjekt); //Sender objektene videre til autentiseringen
+                initSignatur("OktNokkel"); //TEST: Authenticated?
             }
         }
     }
@@ -91,7 +92,7 @@ public class FingerprintActivity extends AppCompatActivity {
      * @param nokkelnavn String Navnet til nøkkelen som skal hentes ut
      * @return Signature signatur
      */
-    private Signature initSignatur(String nokkelnavn) {
+    public Signature initSignatur(String nokkelnavn) {
         try {
             //Initialiser signaturen ved hjelp av privatnøkkelen
             fNokkel.load(null);

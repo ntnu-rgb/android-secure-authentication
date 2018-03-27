@@ -17,12 +17,14 @@ public class MainActivity extends AppCompatActivity {
 
    public static SharedPreferences pref = null;
    public static String uuid = null;
+   public static Context ct = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ct = this.getApplicationContext();
         uuid = getUuid();
 
         //Starter opp aktiviteten for fingeravtrykk autentisering
@@ -48,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
      * Lagrer uuid i sharedpreferences
      */
     public static void setUuid(String id) {
+        if (pref == null) {
+            ct.getSharedPreferences(Resources.getSystem().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+           // pref = System.geSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        }
         SharedPreferences.Editor editor = MainActivity.pref.edit();
         editor.putString(Resources.getSystem().getString(R.string.lagret_uuid), id);
         editor.commit();

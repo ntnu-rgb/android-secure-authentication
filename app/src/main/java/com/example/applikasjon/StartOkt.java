@@ -3,6 +3,8 @@ package com.example.applikasjon;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -34,6 +36,7 @@ public class StartOkt extends StringRequest {
         parametere.put("offentlig_oktnokkel", pemOktKey);
         parametere.put("signatur", pemSign);
 
+        Log.d("PARAMETERE", parametere.toString());
     }
     @Override
     public Map<String, String> getParams(){

@@ -41,7 +41,6 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
         this.kontekst = kon;
     }
 
-
     /**
      * Funksjon for å autentisere brukeren for klienten
      * @param fManager FingerprintManager Håndterer aksess til fingeravtrykkshardware.
@@ -86,7 +85,7 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
                             kontekst.startActivity(regIntent);
                         }
                         else {
-                            MainActivity.visFeilMelding(jsonRespons.toString(), kontekst);
+                            MainActivity.visFeilMelding("StartOkt"+jsonRespons.toString(), kontekst);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();  //TODO: Fjern før ferdigstilling
@@ -94,7 +93,7 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
                     }
                 }
             };
-            Signature signatur = kryptOb.getSignature();  //TODO: Endre ved å kalle sign funksjonen i stedet
+            Signature signatur = kryptOb.getSignature();  //TODO: Endre de neste linjene ved å kalle sign funksjonen i stedet
             try {
                 byte[] forSigning = FingerprintActivity.pemOktKey.getBytes();
                 signatur.update(forSigning); //TODO: VERIFY
@@ -103,6 +102,7 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
             } catch (SignatureException e) {
                 e.printStackTrace();
             }
+
             okt = new StartOkt(uuid, pemSign, respons, this.kontekst);
             RequestQueue queue = Volley.newRequestQueue(this.kontekst);
             queue.add(okt);
@@ -129,14 +129,15 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
      * @return String signaturen til skalSigneres i Base64 format. Returnerer null hvis signaturen ikke kunne opprettes.
      */
     public static String sign(String skalSigneres) {
-        Signature signatur = kryptOb.getSignature();
+        Signature signatur = FingerprintActivity.signatur;
+    //    Signature signatur = kryptOb.getSignature();
         byte[] forSigning = skalSigneres.getBytes();
         try {
             signatur.update(forSigning);
             byte[] signert = signatur.sign();
             return Base64.encodeToString(signert, Base64.DEFAULT);
         } catch (SignatureException e) {
-            e.printStackTrace();
+           e.printStackTrace();
         }
         return null;
     }
