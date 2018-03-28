@@ -25,14 +25,15 @@ public class StartOkt extends StringRequest {
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public StartOkt(String uuid, String pemSign, Response.Listener<String> listener, Context con) {
+    public StartOkt(String pemSign, Response.Listener<String> listener, Context con) {
         super(Request.Method.POST, LOGGINNURL, listener, null);
         this.kontekst = con;
 
         //Setter inn de forskjellige parameterene som skal sendes til server
+
         parametere = new HashMap<>();
         parametere.put("start_okt", "true");
-        parametere.put("uuid", uuid);
+        parametere.put("uuid", MainActivity.uuid);
         parametere.put("offentlig_oktnokkel", pemOktKey);
         parametere.put("signatur", pemSign);
 

@@ -56,7 +56,8 @@ public class UtforHandlingActivity extends AppCompatActivity {
                             boolean suksess = jsonRespons.getBoolean("suksess");
                             if (suksess) { //Hvis serveren har returnert suksess
                                 //TODO
-                                MainActivity.visFeilMelding(jsonRespons.toString(), UtforHandlingActivity.this);
+                                MainActivity.visMelding(jsonRespons.toString(), UtforHandlingActivity.this);
+
                             }
                             else { //Hvis serveren returnerer suksess=false vises en feilmelding
                                 MainActivity.visFeilMelding("Utforhandling"+jsonRespons.toString(), UtforHandlingActivity.this );
@@ -87,6 +88,11 @@ public class UtforHandlingActivity extends AppCompatActivity {
         String handling = "TODO";
         String tidspunkt = (Calendar.getInstance().getTime()).toString();
         return handling+tidspunkt;
+    }
+
+    @Override
+    public void onBackPressed() {
+        //Ikke gjør noe
     }
 
 }

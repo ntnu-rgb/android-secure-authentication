@@ -33,7 +33,6 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
 
     private Context kontekst;
     public static FingerprintManager.CryptoObject kryptOb;
-    private StartOkt okt = null;
     public static String pemSign;
     public static String OktNr;
 
@@ -66,49 +65,15 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
         super.onAuthenticationSucceeded(resultat);                                  //Kall parentfunksjonen
         //StartOkt okt = null;
         //Sender til innlogging hvis uuid ikke finnes (førstegangsautentisering er ikke gjennomført)
-        if (uuid == null) {
+        if (uuid == null || OktNr == null) { //TODO: Egen funksjonalitet hvis bare OktNr er null
             kontekst.startActivity(new Intent(kontekst, LogginnActivity.class));
         }
-
         else {
-            Response.Listener<String> respons = new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    JSONObject jsonRespons = null;
-                    try {
-                        jsonRespons = new JSONObject(response);
-                        boolean suksess = jsonRespons.getBoolean("suksess");
-
-                        if (suksess) {
-                            OktNr = jsonRespons.getString("oktNr");
-                            Intent regIntent = new Intent(kontekst, UtforHandlingActivity.class);
-                            kontekst.startActivity(regIntent);
-                        }
-                        else {
-                            MainActivity.visFeilMelding("StartOkt"+jsonRespons.toString(), kontekst);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();  //TODO: Fjern før ferdigstilling
-
-                    }
-                }
-            };
-            Signature signatur = kryptOb.getSignature();  //TODO: Endre de neste linjene ved å kalle sign funksjonen i stedet
-            try {
-                byte[] forSigning = FingerprintActivity.pemOktKey.getBytes();
-                signatur.update(forSigning); //TODO: VERIFY
-                byte[] signert = signatur.sign();
-                pemSign = Base64.encodeToString(signert, Base64.DEFAULT);
-            } catch (SignatureException e) {
-                e.printStackTrace();
-            }
-
-            okt = new StartOkt(uuid, pemSign, respons, this.kontekst);
-            RequestQueue queue = Volley.newRequestQueue(this.kontekst);
-            queue.add(okt);
-
+            Intent regIntent = new Intent(kontekst, UtforHandlingActivity.class);
+            kontekst.startActivity(regIntent);
         }
     }
+
 
     @Override  //Hvis autentiseringen feilet
     public void onAuthenticationFailed() {

@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 /**
  * Hovedklassen for å starte appen og sette i gang riktig aktivitet
@@ -51,13 +52,18 @@ public class MainActivity extends AppCompatActivity {
      */
     public static void setUuid(String id) {
         if (pref == null) {
-            ct.getSharedPreferences(Resources.getSystem().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-           // pref = System.geSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            pref = ct.getSharedPreferences("FingerPrintAuth", Context.MODE_PRIVATE);
         }
-        SharedPreferences.Editor editor = MainActivity.pref.edit();
-        editor.putString(Resources.getSystem().getString(R.string.lagret_uuid), id);
-        editor.commit();
-        uuid = id;
+        try {
+            SharedPreferences.Editor editor = MainActivity.pref.edit();
+            editor.putString("lagretuuid", id); //Bruker plaintext på grunn av static method
+            editor.commit();
+            uuid = id;
+            Log.d("ID", id);
+        } catch (Resources.NotFoundException e){
+            Log.d("RESSURSERROR", "Kunne ikke finne verdi i ressursfil");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -73,4 +79,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public static void visMelding(String s, Context con) {
+        AlertDialog.Builder feil = new AlertDialog.Builder(con);
+        feil.setMessage(s).setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //TODO
+            }
+        }).create().show();
+    }
 }
