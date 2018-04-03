@@ -1,5 +1,7 @@
 <?php
 
+$OKTMINUTTER = 1; // TODO: Hvor mange minutter skal økten vare?
+
 /**
  * Klasse for å behandle en bruker.
  */
@@ -179,7 +181,7 @@ class Bruker {
       return json_encode($retur);
     }
 
-    $utloper = date('Y:m:d H:i:s', strtotime('+10 minutes'));               // TODO: Hvor lenge skal den være gyldig?
+    $utloper = date('Y:m:d H:i:s', strtotime("+$OKTMINUTTER minutes"));
 
     $sql = 'SELECT MAX(nr) AS maks FROM okt WHERE nokkel = ?';          // Finner neste økt-nummer i rekken for angitt nøkkel
     $sth = $this->dbh->prepare($sql);
@@ -223,16 +225,25 @@ class Bruker {
       return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke er unik for økten
     } 
 
-    $sql = 'SELECT offentlig_oktnokkel FROM okt WHERE nokkel = ? AND nr = ?';  
+    // TODO: Sjekk utløpstidspunkt
+    $sql = 'SELECT offentlig_oktnokkel, utloper FROM okt WHERE nokkel = ? AND nr = ?';  
     $sth = $this->dbh->prepare($sql);                                   // Henter ut offentlig øktnøkkel som hører til den private
     $sth->execute([$uuid, $oktNr]);                                     // øktnøkkelen som nonce skal være signert med.
     $rad = $sth->fetch(PDO::FETCH_ASSOC);
     if($rad !== null) {
       $nokkel = openssl_get_publickey($rad['offentlig_oktnokkel']);     // Importerer nøkkel til OpenSSL
+      $utlopstidspunkt = strtotime($rad['utloper']);                    // Henter ut utløpstidspunkt for økten
+      if($utlopstidspunkt < time()) {                                   // Sjekker om økten har utløpt
+        $retur['suksess'] = false;
+        $retur['feilmelding'] = 'Økten har utløpt, vennligst opprett en ny økt';
+        openssl_free_key($nokkel);
+        return json_encode($retur);
+      }
     }
     else {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Fant ikke offentlig øktnøkkel';
+      openssl_free_key($nokkel);
       return json_encode($retur);                                       // Returnerer feilmelding dersom offentlig øktnøkkel ikke ble funnet
     }
 
@@ -247,20 +258,26 @@ class Bruker {
       openssl_free_key($nokkel);                                        // Frigjør OpenSSL nøkkel-objektet
     }
 
-    $sql = 'INSERT INTO transaksjon(nokkel, oktNr, transaksjonssignatur, transaksjon) VALUES(?, ?, ?, ?)';   // Lagrer unna nonce
+    $sql = 'INSERT INTO transaksjon(nokkel, oktNr, transaksjonssignatur, transaksjon) VALUES(?, ?, ?, ?)';   // Lagrer unna transaksjon
     $sth = $this->dbh->prepare($sql);
     $sth->execute([$uuid, $oktNr, $signatur, $transaksjon]);
-    if($sth->rowCount() !== 1) {                                        // Sjekker at nonce ble lagret
+    if($sth->rowCount() !== 1) {                                        // Sjekker at transaksjon ble lagret
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Kunne ikke lagre transaksjon';
       return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke kunne lagres
     }
 
+    $nyUtlop = strtotime("+$OKTMINUTTER minutes");
+    $sql = 'UPDATE okt SET utloper = ? WHERE nr = ? AND nokkel = ?';
+    $sth = $this->dbh->prepare($sql);
+    $sth->execute([$nyUtlop, $oktNr, $uuid]);
+  
     $handling = json_decode($transaksjon, true);
 
     // Gjør handling
 
     $retur['suksess'] = true;
+    $retur['utloper'] = $nyUtlop;                                        // Sender nytt utløpstidspunkt for økten til klienten
     return json_encode($retur);
   }
 }
