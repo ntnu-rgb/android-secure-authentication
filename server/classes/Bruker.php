@@ -1,6 +1,6 @@
 <?php
 
-$OKTMINUTTER = 1; // TODO: Hvor mange minutter skal økten vare?
+$OKTMINUTTER = 2; // TODO: Hvor mange minutter skal økten vare? Må være større enn eller lik 2
 
 /**
  * Klasse for å behandle en bruker.
