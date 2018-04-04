@@ -269,7 +269,7 @@ class Bruker {
       return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke kunne lagres
     }
 
-    $nyUtlop = strtotime("+$this->OKTMINUTTER minutes");
+    $nyUtlop = date('Y:m:d H:i:s', strtotime("+$this->OKTMINUTTER minutes"));
     $sql = 'UPDATE okt SET utloper = ? WHERE nr = ? AND nokkel = ?';
     $sth = $this->dbh->prepare($sql);
     $sth->execute([$nyUtlop, $oktNr, $uuid]);
