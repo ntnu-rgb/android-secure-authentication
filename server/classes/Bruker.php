@@ -1,11 +1,13 @@
 <?php
 
-$OKTMINUTTER = 2; // TODO: Hvor mange minutter skal økten vare? Må være større enn eller lik 2
-
 /**
  * Klasse for å behandle en bruker.
  */
 class Bruker {
+  /** @var int Angir hvor mange minutter økten skal vare */
+  private $OKTMINUTTER = 2; // TODO: Hvor mange minutter skal økten vare? Må være større enn eller lik 2
+
+
   /** @var PDO Skal inneholde et PDO-objekt som mottas i constructoren */
   private $dbh;
 
@@ -181,7 +183,7 @@ class Bruker {
       return json_encode($retur);
     }
 
-    $utloper = date('Y:m:d H:i:s', strtotime("+$OKTMINUTTER minutes"));
+    $utloper = date('Y:m:d H:i:s', strtotime("+$this->OKTMINUTTER minutes"));
 
     $sql = 'SELECT MAX(nr) AS maks FROM okt WHERE nokkel = ?';          // Finner neste økt-nummer i rekken for angitt nøkkel
     $sth = $this->dbh->prepare($sql);
@@ -267,7 +269,7 @@ class Bruker {
       return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke kunne lagres
     }
 
-    $nyUtlop = strtotime("+$OKTMINUTTER minutes");
+    $nyUtlop = strtotime("+$this->OKTMINUTTER minutes");
     $sql = 'UPDATE okt SET utloper = ? WHERE nr = ? AND nokkel = ?';
     $sth = $this->dbh->prepare($sql);
     $sth->execute([$nyUtlop, $oktNr, $uuid]);
