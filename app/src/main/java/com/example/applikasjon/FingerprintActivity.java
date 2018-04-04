@@ -161,4 +161,12 @@ public class FingerprintActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    /**
+     * Hindrer brukeren fra å gå bakover i autentiseringen
+     */
+    @Override
+    public void onBackPressed() {
+        //Ikke gjør noe
+    }
+
 }
