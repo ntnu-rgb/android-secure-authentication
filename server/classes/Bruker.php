@@ -183,7 +183,7 @@ class Bruker {
       return json_encode($retur);
     }
 
-    $utloper = date('Y:m:d H:i:s', strtotime("+$this->OKTMINUTTER minutes"));
+    $utloper = date('Y-m-d H:i:s', strtotime("+$this->OKTMINUTTER minutes"));
 
     $sql = 'SELECT MAX(nr) AS maks FROM okt WHERE nokkel = ?';          // Finner neste økt-nummer i rekken for angitt nøkkel
     $sth = $this->dbh->prepare($sql);
@@ -269,7 +269,7 @@ class Bruker {
       return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke kunne lagres
     }
 
-    $nyUtlop = date('Y:m:d H:i:s', strtotime("+$this->OKTMINUTTER minutes"));
+    $nyUtlop = date('Y-m-d H:i:s', strtotime("+$this->OKTMINUTTER minutes"));
     $sql = 'UPDATE okt SET utloper = ? WHERE nr = ? AND nokkel = ?';
     $sth = $this->dbh->prepare($sql);
     $sth->execute([$nyUtlop, $oktNr, $uuid]);
