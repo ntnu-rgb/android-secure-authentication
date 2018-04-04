@@ -3,7 +3,6 @@ package com.example.applikasjon;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -15,9 +14,7 @@ import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.example.applikasjon.FingerprintActivity.KEYNAME;
-
 
 /**
  * Klasse for å gjøre klar en innloggingsforespørsel til serveren
@@ -28,7 +25,13 @@ public class LogginnForesporsel extends StringRequest {
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
     private Context kontekst = null;
 
-
+    /**
+     * Constructor som setter opp en forespørsel
+     * @param brukernavn String Brukernavnet til brukeren
+     * @param passord String Passordet til brukeren
+     * @param listener Resonse.Listener<String> Lytter til svar fra serveren
+     * @param con Context Konteksten som elementer skal vises i
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public LogginnForesporsel(String brukernavn, String passord, Response.Listener<String> listener, Context con) {
         super(Request.Method.POST, LOGGINNURL, listener, null);
@@ -56,6 +59,10 @@ public class LogginnForesporsel extends StringRequest {
         parametere.put("forstegangsautentisering", "true");
     }
 
+    /**
+     * Henter ut innholdet til parameterarrayen(Map)
+     * @return Map parameterene til forespørselen
+     */
     @Override
     public Map<String, String> getParams(){
         return parametere;

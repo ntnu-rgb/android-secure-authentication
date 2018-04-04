@@ -24,4 +24,5 @@
     <string name="ikkeTilgangTilNokkel">Feil ved uthenting av nøkkel</string>
     <string name="feilVedSignering">Feil ved signering</string>
     <string name="title_activity_utfor_handling">UtforHandlingActivity</string>
+    <string name="lagret_oktnr">lagretoktnr</string>
 </resources>

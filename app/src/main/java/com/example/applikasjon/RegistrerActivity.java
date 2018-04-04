@@ -18,6 +18,10 @@ import org.json.JSONObject;
  */
 public class RegistrerActivity extends AppCompatActivity {
 
+    /**
+     * Constructor som håndterer kommunikasjon med server når registreringsknappen blir trykket
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,17 +45,15 @@ public class RegistrerActivity extends AppCompatActivity {
                         try {
                             jsonRespons = new JSONObject(respons);
                             boolean suksess = jsonRespons.getBoolean("suksess");
-
                             if (suksess) { //Hvis serveren har returnert suksess starter innloggingen
                                Intent intent = new Intent(RegistrerActivity.this, LogginnActivity.class);
-                                RegistrerActivity.this.startActivity(intent);
+                               RegistrerActivity.this.startActivity(intent);
                             }
                             else { //Hvis serveren returnerer suksess=false vises en feilmelding
                                 MainActivity.visFeilMelding(jsonRespons.getString("Feilmelding"), RegistrerActivity.this);
                             }
                         } catch (JSONException e) {
-                            e.printStackTrace();  //TODO: Fjern før ferdigstilling
-
+                            MainActivity.visFeilMelding("En feil har oppstått", RegistrerActivity.this);
                         }
                     }
                 };

@@ -10,20 +10,9 @@ import android.os.CancellationSignal;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
-import android.util.Log;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.security.Signature;
 import java.security.SignatureException;
-
 import static com.example.applikasjon.MainActivity.uuid;
-
 
 /**
  * Klasse som håndterer fingeravtrykkautentiseringen
@@ -34,8 +23,11 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
     private Context kontekst;
     public static FingerprintManager.CryptoObject kryptOb;
     public static String pemSign;
-    public static String OktNr;
 
+    /**
+     * Constructor som setter konteksten til klassen
+     * @param kon Context Konteksten som elementene skal vises i
+     */
     FingerprintHjelper(Context kon) {
         this.kontekst = kon;
     }
@@ -60,21 +52,24 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
         else return;
     }
 
-    @Override  //Hvis autentiseringen er godkjent
+    /**
+     * Hvis autentiseringen er godkjent startes LogginnActivity hvis uuid er null, ellers så kalles startOkt hvis uuid allerede er satt
+     * @param resultat Resultaten fra autentiseringen
+     */
+    @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult resultat) {
-        super.onAuthenticationSucceeded(resultat);                                  //Kall parentfunksjonen
-        //StartOkt okt = null;
-        //Sender til innlogging hvis uuid ikke finnes (førstegangsautentisering er ikke gjennomført)
-        if (uuid == null || OktNr == null) { //TODO: Egen funksjonalitet hvis bare OktNr er null
+        super.onAuthenticationSucceeded(resultat);                                //Kaller parentfunksjonen
+        if (uuid == null) {
             kontekst.startActivity(new Intent(kontekst, LogginnActivity.class));
         }
         else {
-            Intent regIntent = new Intent(kontekst, UtforHandlingActivity.class);
-            kontekst.startActivity(regIntent);
+            LogginnActivity.startOkt(kontekst);
         }
     }
 
-
+    /**
+     * Hvis autentiseringen ikke er godkjent vises en feilmelding som også starter fingerprintactivity på nytt
+     */
     @Override  //Hvis autentiseringen feilet
     public void onAuthenticationFailed() {
         super.onAuthenticationFailed();                                                                     //Kall parentfunksjonen
@@ -82,11 +77,13 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
         return;
     }
 
-
+    /**
+     * Setter klassens kryptOb
+     * @param cr CryptoObject som sendes med
+     */
     private void settKryptoObjekt(FingerprintManager.CryptoObject cr) {
         this.kryptOb = cr;
     }
-
 
     /**
      * Funksjon for å signere en medsendt String
@@ -95,7 +92,6 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
      */
     public static String sign(String skalSigneres) {
         Signature signatur = FingerprintActivity.signatur;
-    //    Signature signatur = kryptOb.getSignature();
         byte[] forSigning = skalSigneres.getBytes();
         try {
             signatur.update(forSigning);

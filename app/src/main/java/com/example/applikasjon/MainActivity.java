@@ -9,7 +9,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 /**
  * Hovedklassen for å starte appen og sette i gang riktig aktivitet
@@ -19,6 +18,11 @@ public class MainActivity extends AppCompatActivity {
    public static SharedPreferences pref = null;
    public static String uuid = null;
    public static Context ct = null;
+   public static String OktNr = null;
+
+    /**
+     * Constructor som setter opp de forskjellige variablene som MainActivity bruker og sender brukeren videre til FingerprintActivity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ct = this.getApplicationContext();
         uuid = getUuid();
+        OktNr = getOktNr();
 
         //Starter opp aktiviteten for fingeravtrykk autentisering
         this.startActivity(new Intent(this, FingerprintActivity.class));
@@ -42,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         feil.setMessage(str).setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                System.exit(0);
+                con.startActivity(new Intent(con, FingerprintActivity.class));
             }
         }).create().show();
     }
@@ -51,18 +56,14 @@ public class MainActivity extends AppCompatActivity {
      * Lagrer uuid i sharedpreferences
      */
     public static void setUuid(String id) {
-        if (pref == null) {
-            pref = ct.getSharedPreferences("FingerPrintAuth", Context.MODE_PRIVATE);
-        }
+        pref = ct.getSharedPreferences("FingerPrintAuth", Context.MODE_PRIVATE);
         try {
             SharedPreferences.Editor editor = MainActivity.pref.edit();
             editor.putString("lagretuuid", id); //Bruker plaintext på grunn av static method
             editor.commit();
             uuid = id;
-            Log.d("ID", id);
         } catch (Resources.NotFoundException e){
-            Log.d("RESSURSERROR", "Kunne ikke finne verdi i ressursfil");
-            e.printStackTrace();
+            MainActivity.visFeilMelding("En feil har oppstått", MainActivity.ct);
         }
     }
 
@@ -78,13 +79,29 @@ public class MainActivity extends AppCompatActivity {
         else return pref.getString(getString(R.string.lagret_uuid), null);
     }
 
+    /**
+     * Henter ut øktnummer
+     * @return String OktNr som brukes for å identifisere en økt. null hvis den ikke finnes
+     */
+    public String getOktNr() {
+        if (OktNr != null) {
+            return OktNr;
+        }
+        else return null;
+    }
 
+    /**
+     * Viser en melding uten å avslutte programmet.
+     * Brukes for informasjonsmeldinger, ikke feilmeldinger.
+     * @param s String Meldingen som skal vises
+     * @param con Context Konteksten som meldingen skal vises i
+     */
     public static void visMelding(String s, Context con) {
         AlertDialog.Builder feil = new AlertDialog.Builder(con);
         feil.setMessage(s).setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //TODO
+                //Ikke gjør noe
             }
         }).create().show();
     }

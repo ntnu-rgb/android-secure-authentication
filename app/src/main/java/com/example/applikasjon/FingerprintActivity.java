@@ -13,7 +13,6 @@ import android.security.keystore.KeyProperties;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -29,6 +28,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.ECGenParameterSpec;
 
+import static java.lang.System.exit;
+
 
 public class FingerprintActivity extends AppCompatActivity {
 
@@ -39,16 +40,17 @@ public class FingerprintActivity extends AppCompatActivity {
     public static final String KEYNAME = "NOKKEL";
     public static KeyPairGenerator parGenerator;
     public static Signature signatur;
-
+    /**
+     * Constructor som setter variabler, sjekker at finger
+     * @param savedInstanceState
+     */
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fingerprint);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         KeyguardManager kManager = (KeyguardManager)getSystemService(KEYGUARD_SERVICE);
         FingerprintManager fManager = (FingerprintManager)getSystemService(FINGERPRINT_SERVICE);
 
@@ -66,24 +68,27 @@ public class FingerprintActivity extends AppCompatActivity {
             MainActivity.visFeilMelding(this.getString(R.string.internettfeil), this);
         }
         else { //Generer asymmetriske nøkler
-
+            try {
+                fNokkel = KeyStore.getInstance("AndroidKeyStore");
+                fNokkel.load(null);
+            } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
+                MainActivity.visFeilMelding("En feil har oppstått", this);
+            }
             if (MainActivity.uuid == null) { //Sjekker om brukeren har gjennomført førstegangsautentisering
                 genererNokler(null);
             }
-            genererNokler("OktNokkel");
-
+            genererNokler("OktNokkel"); //TEST, fjern sjekken hvis dette ikke fungerer
             if ((initSignatur(KEYNAME)) != null) {
                 FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
                 FingerprintHjelper hjelper = new FingerprintHjelper(this);
                 try { //Setter opp pemOktKey på et format som kan leses av server
                     pemOktKey = "-----BEGIN PUBLIC KEY-----\n"+android.util.Base64.encodeToString(fNokkel.getCertificate("OktNokkel").getPublicKey().getEncoded(), android.util.Base64.DEFAULT)+"-----END PUBLIC KEY-----";
-
                 } catch (KeyStoreException e) {
-                    e.printStackTrace();
+                    MainActivity.visFeilMelding("En feil har oppstått", FingerprintActivity.this);
                 }
                 hjelper.startAutentisering(fManager, cObjekt); //Sender objektene videre til autentiseringen
                 initSignatur("OktNokkel"); //TEST: Authenticated?
-            }
+            } else exit(0);
         }
     }
 
@@ -95,38 +100,28 @@ public class FingerprintActivity extends AppCompatActivity {
     public Signature initSignatur(String nokkelnavn) {
         try {
             //Initialiser signaturen ved hjelp av privatnøkkelen
-            fNokkel.load(null);
             signatur = Signature.getInstance("SHA256withECDSA");
             PrivateKey priv = (PrivateKey) fNokkel.getKey(nokkelnavn, null);
             signatur.initSign(priv);
-
-        } catch (NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
+        } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
             MainActivity.visFeilMelding(this.getString(R.string.feil), this);
         }
        return signatur;
     }
 
-
     /**
      * Funksjon for å generere asymmetriske nøkler
+     * Skiller mellom generering av øktnøkler og de permanente nøklene
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void genererNokler(String name) {
         try {
-            fNokkel = KeyStore.getInstance("AndroidKeyStore");  //Last inn en android keystore instance
-        } catch (KeyStoreException e) {
-            e.printStackTrace();                             //TODO: Fjern før ferdigstilling
-        }
-
-        try {
             parGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore"); //Hent et KeyPairGenerator objekt som genererer hemmelige nøkler for AES
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            e.printStackTrace();                            //TODO: Fjern før ferdigstilling
+            System.exit(0);
         }
-
         //Oppretter asymmetriske nøkler
         try {
-            fNokkel.load(null);                                 //Last inn keystore
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (name == null) {  //null = generer det permanente paret
                     parGenerator.initialize(
@@ -150,8 +145,8 @@ public class FingerprintActivity extends AppCompatActivity {
                     oktpar = parGenerator.generateKeyPair();
                 }
             }
-        } catch (IOException | NoSuchAlgorithmException | CertificateException | InvalidAlgorithmParameterException e) {
-            Log.d("FEIL", "Kunne ikke generere nøkler i FingerprintActivity");  //TODO: Fjern før ferdigstilling
+        } catch ( InvalidAlgorithmParameterException e) {
+            System.exit(0);
         }
     }
     /**
@@ -165,4 +160,5 @@ public class FingerprintActivity extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
 }

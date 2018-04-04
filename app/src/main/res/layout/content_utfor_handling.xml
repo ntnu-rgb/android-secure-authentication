@@ -10,13 +10,13 @@
 
     <TextView
         android:id="@+id/WIP"
-        android:layout_width="51dp"
-        android:layout_height="29dp"
+        android:layout_width="140dp"
+        android:layout_height="152dp"
         android:layout_marginTop="16dp"
-        android:text="WIP"
+        android:gravity="center"
+        android:text="Du har nå en økt du kan bruke for å utføre en handling."
         app:layout_constraintBottom_toTopOf="@+id/utfor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
