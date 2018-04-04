@@ -135,9 +135,8 @@ public class LogginnActivity extends AppCompatActivity {
                     }
                     else {
                         MainActivity.OktNr = null;
-                        MainActivity.visFeilMelding("En feil har oppstått i Logginnactivity - startøkt", con);
-                        Intent regIntent = new Intent(con, FingerprintActivity.class);
-                        con.startActivity(regIntent);
+                        MainActivity.setUuid(null);
+                        MainActivity.visFeilMelding("En feil har oppstått, vennligst prøv igjen", con);
                     }
                 } catch (JSONException e) {
                     MainActivity.visFeilMelding("En feil har oppstått", con);
