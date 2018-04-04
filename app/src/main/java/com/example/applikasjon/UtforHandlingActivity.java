@@ -80,7 +80,6 @@ public class UtforHandlingActivity extends AppCompatActivity {
         res.put("tidspunkt", Calendar.getInstance().getTime().toString());
         return new JSONObject(res);
     }
-
     /**
      * Overrider tilbakeknappen så den ikke kan trykkes for å gå bakover i autentiseringen
      */

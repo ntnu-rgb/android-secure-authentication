@@ -136,7 +136,7 @@ public class LogginnActivity extends AppCompatActivity {
                     else {
                         MainActivity.OktNr = null;
                         MainActivity.setUuid(null);
-                        MainActivity.visFeilMelding("En feil har oppstått, vennligst prøv igjen", con);
+                        MainActivity.visFeilMelding("En feil har oppstått, vennligst logg inn på nytt", con);
                     }
                 } catch (JSONException e) {
                     MainActivity.visFeilMelding("En feil har oppstått", con);
