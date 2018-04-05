@@ -5,7 +5,7 @@
  */
 class Bruker {
   /** @var int Angir hvor mange minutter økten skal vare */
-  private $OKTMINUTTER = 2; // TODO: Hvor mange minutter skal økten vare? Må være større enn eller lik 2
+  private $OKTMINUTTER = 5;                            // Hvor mange minutter økten skal vare. Må være større enn eller lik 2
 
 
   /** @var PDO Skal inneholde et PDO-objekt som mottas i constructoren */
@@ -25,7 +25,7 @@ class Bruker {
    * 
    * @param string $epost E-postadressen til brukeren.
    * @param string $passord Passordet til brukeren.
-   * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
+   * @return array En array med returverdier som 'suksess' og eventuelt 'feilmelding'.
    */
   public function registrer($epost, $passord) {
     $retur = [];
@@ -53,7 +53,7 @@ class Bruker {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'En bruker med den e-postadressen eksisterer allerede';
     }
-    return json_encode($retur);
+    return $retur;
   }
 
   /**
@@ -62,7 +62,7 @@ class Bruker {
    * @param string $epost E-postadressen til brukeren.
    * @param string $passord Passordet til brukeren.
    * @param string $offentligNokkel Den offentlige nøkkelen som brukeren vil knytte til seg.
-   * @return string En JSON-kodet tekst med returverdier som 'suksess', 'uuid' og eventuelt 'feilmelding'.
+   * @return array En array med returverdier som 'suksess', 'uuid' og eventuelt 'feilmelding'.
    */
   public function forstegangsautentisering($epost, $passord, $offentligNokkel) {
     $retur = [];
@@ -93,7 +93,7 @@ class Bruker {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Feil e-postadresse eller passord';
     }
-    return json_encode($retur);
+    return $retur;
   }
 
   /**
@@ -101,7 +101,7 @@ class Bruker {
    * 
    * @param int $brukerId Id til brukeren som har autentisert seg og sendt inn nøkkelen.
    * @param string $offentligNokkel Den offentlige nøkkelen (i PEM-format) som skal knyttes til brukeren.
-   * @return string Returnerer en UUID som er knyttet til nøkkelen, eventuelt null dersom nøkkelen ikke kunne legges inn.
+   * @return string|null Returnerer en UUID som er knyttet til nøkkelen, eventuelt null dersom nøkkelen ikke kunne legges inn.
    */
   private function lagreOffentligNokkel($brukerId, $offentligNokkel) {
 
@@ -141,7 +141,7 @@ class Bruker {
    * @param string $uuid Den unike id'en til nøkkelen som det signeres med.
    * @param string $offentligOktnokkel Den offentlige nøkkelen (i PEM-format) som skal brukes til å autentisere kall resten av økten.
    * @param string $signatur En base64-kodet signatur av øktnøkkelen som brukes til å autentisere brukeren som vil starte økten.
-   * @return string En JSON-kodet tekst med returverdier som 'suksess', 'oktNr' og eventuelt 'feilmelding'.
+   * @return array En array med returverdier som 'suksess', 'oktNr' og eventuelt 'feilmelding'.
    */
   public function startOkt($uuid, $offentligOktnokkel, $signatur) {
     $retur = [];
@@ -156,7 +156,7 @@ class Bruker {
     else {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Fant ikke offentlig  nøkkel';
-      return json_encode($retur);                                       // Returnerer feilmelding dersom offentlig nøkkel ikke ble funnet
+      return $retur;                                                    // Returnerer feilmelding dersom offentlig nøkkel ikke ble funnet
     }
  
     $binSignatur = base64_decode($signatur);
@@ -167,7 +167,7 @@ class Bruker {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Ugyldig signatur';
       openssl_free_key($nokkel);
-      return json_encode($retur);                                       // Returnerer feilmelding dersom signaturen var ugyldig
+      return $retur;                                                    // Returnerer feilmelding dersom signaturen var ugyldig
     }
     else {
       openssl_free_key($nokkel);                                        // Frigjør OpenSSL nøkkel-objektet
@@ -180,7 +180,7 @@ class Bruker {
     if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Økt eksisterer allerede';                // Gir feilmelding dersom en identisk nøkkel allerede eksisterer
-      return json_encode($retur);
+      return $retur;
     }
 
     $utloper = date('Y-m-d H:i:s', strtotime("+$this->OKTMINUTTER minutes"));
@@ -203,7 +203,7 @@ class Bruker {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Kunne ikke opprette økt';
     }
-    return json_encode($retur);
+    return $retur;
   }
 
   /**
@@ -213,7 +213,7 @@ class Bruker {
    * @param int $oktNr Identifikator for økten (sammen med UUID til nøkkelparet).
    * @param string $transaksjon En JSON-kodet tekst med data tilknyttet handlingen.
    * @param string $signatur En base64-kodet signatur av transaksjonen, signert med den private øktnøkkelen.
-   * @return string En JSON-kodet tekst med returverdier som 'suksess' og eventuelt 'feilmelding'.
+   * @return array En array med returverdier som 'suksess' og eventuelt 'feilmelding'.
    */
   public function utforHandling($uuid, $oktNr, $transaksjon, $signatur) {
     $retur = [];
@@ -224,10 +224,9 @@ class Bruker {
     if($sth->fetch(PDO::FETCH_ASSOC)['antall'] != 0) {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Transaksjon er allerede gjennomført';
-      return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke er unik for økten
+      return $retur;                                                    // Returnerer feilmelding dersom nonce ikke er unik for økten
     } 
 
-    // TODO: Sjekk utløpstidspunkt
     $sql = 'SELECT offentlig_oktnokkel, utloper FROM okt WHERE nokkel = ? AND nr = ?';  
     $sth = $this->dbh->prepare($sql);                                   // Henter ut offentlig øktnøkkel som hører til den private
     $sth->execute([$uuid, $oktNr]);                                     // øktnøkkelen som nonce skal være signert med.
@@ -239,14 +238,14 @@ class Bruker {
         $retur['suksess'] = false;
         $retur['feilmelding'] = 'Økten har utløpt, vennligst opprett en ny økt';
         openssl_free_key($nokkel);
-        return json_encode($retur);
+        return $retur;
       }
     }
     else {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Fant ikke offentlig øktnøkkel';
       openssl_free_key($nokkel);
-      return json_encode($retur);                                       // Returnerer feilmelding dersom offentlig øktnøkkel ikke ble funnet
+      return $retur;                                                    // Returnerer feilmelding dersom offentlig øktnøkkel ikke ble funnet
     }
 
     $binSignatur = base64_decode($signatur);
@@ -254,7 +253,7 @@ class Bruker {
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Ugyldig signatur';
       openssl_free_key($nokkel);
-      return json_encode($retur);                                       // Returnerer feilmelding dersom signaturen var ugyldig
+      return $retur;                                                    // Returnerer feilmelding dersom signaturen var ugyldig
     }
     else {
       openssl_free_key($nokkel);                                        // Frigjør OpenSSL nøkkel-objektet
@@ -266,7 +265,7 @@ class Bruker {
     if($sth->rowCount() !== 1) {                                        // Sjekker at transaksjon ble lagret
       $retur['suksess'] = false;
       $retur['feilmelding'] = 'Kunne ikke lagre transaksjon';
-      return json_encode($retur);                                       // Returnerer feilmelding dersom nonce ikke kunne lagres
+      return $retur;                                                    // Returnerer feilmelding dersom nonce ikke kunne lagres
     }
 
     $nyUtlop = date('Y-m-d H:i:s', strtotime("+$this->OKTMINUTTER minutes"));
@@ -280,6 +279,6 @@ class Bruker {
 
     $retur['suksess'] = true;
     $retur['utloper'] = $nyUtlop;                                        // Sender nytt utløpstidspunkt for økten til klienten
-    return json_encode($retur);
+    return $retur;
   }
 }

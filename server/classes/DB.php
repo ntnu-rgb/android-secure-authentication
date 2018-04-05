@@ -5,7 +5,10 @@
  * Hent ut et nytt objekt ved å kalle DB::hentDB();
  */
 class DB {
+  /** @var DB Et statisk DB-objekt som opprettes første gang man kobler til databasen */
   private static $db = null;
+
+  /** @var PDO Et PDO-objekt som lagres i DB-objektet. */
   private $dbh = null;
 
   /**
