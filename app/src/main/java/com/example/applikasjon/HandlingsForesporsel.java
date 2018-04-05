@@ -15,6 +15,12 @@ public class HandlingsForesporsel extends StringRequest {
     private static final String HANDLINGSURL = "https://folk.ntnu.no/sturlaba/sfa/";
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
 
+    /**
+     * Constructor som legger riktige verdier til arrayen som skal sendes til server
+     * @param listener Response.Listener<String> Lytter til responsen fra server
+     * @param transak String Transaksjonen som skal utføres
+     * @param sign String Signaturen som skal sendes til server
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public HandlingsForesporsel(Response.Listener<String> listener, String transak, String sign) {
         super(Request.Method.POST, HANDLINGSURL, listener, null);

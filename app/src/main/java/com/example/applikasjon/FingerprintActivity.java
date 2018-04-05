@@ -30,7 +30,9 @@ import java.security.spec.ECGenParameterSpec;
 
 import static java.lang.System.exit;
 
-
+/**
+ * Klasse som håndterer fingeravtrykksautentisering
+ */
 public class FingerprintActivity extends AppCompatActivity {
 
     public static KeyStore fNokkel;
@@ -42,7 +44,6 @@ public class FingerprintActivity extends AppCompatActivity {
     public static Signature signatur;
     /**
      * Constructor som setter variabler, sjekker at finger
-     * @param savedInstanceState
      */
     @TargetApi(Build.VERSION_CODES.M)
     @Override

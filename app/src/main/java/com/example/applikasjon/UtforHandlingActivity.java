@@ -48,7 +48,7 @@ public class UtforHandlingActivity extends AppCompatActivity {
                                 MainActivity.visMelding("Suksess! Transaksjonen har blitt gjennomført. Økten utløper: "+jsonRespons.getString("utloper"), UtforHandlingActivity.this);
                             }
                             else { //Hvis serveren returnerer suksess=false vises en feilmelding
-                                MainActivity.visFeilMelding("Utforhandling"+jsonRespons.toString(), UtforHandlingActivity.this );
+                                MainActivity.visFeilMelding(jsonRespons.getString("feilmelding"), UtforHandlingActivity.this );
                             }
                         } catch (JSONException e) {
                             MainActivity.visFeilMelding("En feil har oppstått ved serverkommunikasjon", UtforHandlingActivity.this);
