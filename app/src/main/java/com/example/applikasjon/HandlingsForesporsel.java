@@ -12,7 +12,6 @@ import java.util.Map;
  *  Klasse for å gjøre klar en handlingsforespørsel før den sendes til server
  */
 public class HandlingsForesporsel extends StringRequest {
-    private static final String HANDLINGSURL = "https://folk.ntnu.no/sturlaba/sfa/";
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
 
     /**
@@ -23,7 +22,7 @@ public class HandlingsForesporsel extends StringRequest {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public HandlingsForesporsel(Response.Listener<String> listener, String transak, String sign) {
-        super(Request.Method.POST, HANDLINGSURL, listener, null);
+        super(Request.Method.POST, MainActivity.HandlingsURL, listener, null);
         //Setter opp verdiene som skal sendes til server
         parametere = new HashMap<>();
         parametere.put("uuid", MainActivity.uuid);

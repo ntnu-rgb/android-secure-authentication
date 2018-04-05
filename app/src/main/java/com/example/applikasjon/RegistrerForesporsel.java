@@ -10,7 +10,6 @@ import java.util.Map;
  */
 public class RegistrerForesporsel extends StringRequest {
 
-    private static final String REGISTRERINGSURL = "https://folk.ntnu.no/sturlaba/sfa/";
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
 
     /**
@@ -20,7 +19,7 @@ public class RegistrerForesporsel extends StringRequest {
      * @param listener Response.Listener<String> Lytter til responsen
      */
     public RegistrerForesporsel(String brukernavn, String passord, Response.Listener<String> listener) {
-        super(Method.POST, REGISTRERINGSURL, listener, null);
+        super(Method.POST, MainActivity.HandlingsURL, listener, null);
         parametere = new HashMap<>();
         parametere.put("epost", brukernavn);
         parametere.put("passord", passord);

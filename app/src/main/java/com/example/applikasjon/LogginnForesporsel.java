@@ -21,7 +21,6 @@ import static com.example.applikasjon.FingerprintActivity.KEYNAME;
  */
 public class LogginnForesporsel extends StringRequest {
 
-    private static final String LOGGINNURL = "https://folk.ntnu.no/sturlaba/sfa/";
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
     private Context kontekst = null;
 
@@ -34,7 +33,7 @@ public class LogginnForesporsel extends StringRequest {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public LogginnForesporsel(String brukernavn, String passord, Response.Listener<String> listener, Context con) {
-        super(Request.Method.POST, LOGGINNURL, listener, null);
+        super(Request.Method.POST, MainActivity.HandlingsURL, listener, null);
 
         KeyStore keyStore = null;
         PublicKey offentligNokkel = null;
@@ -50,7 +49,6 @@ public class LogginnForesporsel extends StringRequest {
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e ) {
             MainActivity.visFeilMelding("Feil ved serverkommunikasjon", this.kontekst);
         }
-
         //Setter alle verdiene som serveren forventer
         parametere = new HashMap<>();
         parametere.put("epost", brukernavn);

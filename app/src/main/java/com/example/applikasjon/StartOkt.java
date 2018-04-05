@@ -15,7 +15,6 @@ import static com.example.applikasjon.FingerprintActivity.*;
  */
 public class StartOkt extends StringRequest {
 
-    private static final String LOGGINNURL = "https://folk.ntnu.no/sturlaba/sfa/";
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
     private Context kontekst = null;
     private String okt = "OktNokkel";
@@ -28,7 +27,7 @@ public class StartOkt extends StringRequest {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public StartOkt(String pemSign, Response.Listener<String> listener, Context con) {
-        super(Request.Method.POST, LOGGINNURL, listener, null);
+        super(Request.Method.POST, MainActivity.HandlingsURL, listener, null);
         this.kontekst = con;
 
         //Setter inn de forskjellige parameterene som skal sendes til server

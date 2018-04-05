@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
    public static String uuid = null;
    public static Context ct = null;
    public static String OktNr = null;
+   public static final String HandlingsURL = "https://example.com"; //Endre denne til riktig server
 
     /**
      * Constructor som setter opp de forskjellige variablene som MainActivity bruker og sender brukeren videre til FingerprintActivity
