@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Lagrer uuid i sharedpreferences
+     * @param id String Medsendt uuid
      */
     public static void setUuid(String id) {
         pref = ct.getSharedPreferences("FingerPrintAuth", Context.MODE_PRIVATE);
