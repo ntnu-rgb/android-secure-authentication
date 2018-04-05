@@ -9,9 +9,32 @@ Som en del av bachelor-oppgaven skulle vi utvikle en applikasjon som benytter se
 Applikasjonen har ingen funksjon annet enn som et konseptbevis for fingeravtrykk-autentisering.
 
 
-### Forutsetninger
+## Krav
 
 * En Android-telefon med fingeravtrykk-leser og Android 6.0 eller nyere.
+* En webserver med PHP-prosessering
+* En MariaDB/MySQL databaseserver
+
+## Oppsett
+
+Følgende skritt må følges for å sette opp applikasjonen og kjøre konseptbeviset
+
+### Databaseserver
+
+1. Opprett en database med navnet ``sfa``.
+2. Importer ``server/DB/opprett.sql`` til sfa-databasen.
+3. Opprett en bruker som har følgende rettigheter for sfa-databasen: ``SELECT, INSERT, UPDATE, DELETE``.
+
+### Applikasjons/Webserver
+
+1. Kopier innholdet fra ``server``-mappen til webserveren.
+2. Endre brukernavn, passord og hostname i ``DB/sql_bruker.php`` slik at feltene stemmer med databasebrukeren som ble opprettet. Eventuelt fjern require og endre verdiene direkte i ``classes/DB.php``, linje 19 til 23.
+
+### Applikasjon
+
+1. Åpne repository-mappen med Android Studio
+2. La Gradle synkronisere prosjektet
+3. Kjør applikasjonen på en virtuell enhet eller en enhet som er koblet til via ADB.
 
 ## Forfattere
 
@@ -26,6 +49,6 @@ Koden i dette repositoriet er lisensiert under Apache lisensen, versjon 2.0 ders
 ## Anerkjennelser
 
 Vi vil takke alle som har assistert oss under arbeidet med prosjektet:
+
 * Vår veileder Prof. Dr. Basel Katt
 * Våre kontaktpersoner ved Eika Gruppen, Thomas Eriksson og Jon Hagen.
-
