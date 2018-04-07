@@ -24,6 +24,14 @@ public class LogginnForesporsel extends StringRequest {
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
     private Context kontekst = null;
 
+
+    /**
+     * Tom constructor
+     */
+    public LogginnForesporsel() {
+        super(Request.Method.POST, null, null, null);
+        parametere = null;
+    }
     /**
      * Constructor som setter opp en forespørsel
      * @param brukernavn String Brukernavnet til brukeren

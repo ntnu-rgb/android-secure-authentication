@@ -14,6 +14,15 @@ import java.util.Map;
 public class HandlingsForesporsel extends StringRequest {
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
 
+
+    /**
+     * Tom constructor
+     */
+    public HandlingsForesporsel() {
+        super(Request.Method.POST, null, null, null);
+        parametere = null;
+    }
+
     /**
      * Constructor som legger riktige verdier til arrayen som skal sendes til server
      * @param listener Response.Listener<String> Lytter til responsen fra server

@@ -1,5 +1,6 @@
 package com.example.applikasjon;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
@@ -11,6 +12,15 @@ import java.util.Map;
 public class RegistrerForesporsel extends StringRequest {
 
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
+
+
+    /**
+     * Tom constructor
+     */
+    public RegistrerForesporsel() {
+        super(Request.Method.POST, null, null, null);
+        parametere = null;
+    }
 
     /**
      * Constructor som legger riktige verdier til arrayen som skal sendes til server

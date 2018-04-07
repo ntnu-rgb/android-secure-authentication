@@ -19,6 +19,15 @@ public class StartOkt extends StringRequest {
     private Context kontekst = null;
     private String okt = "OktNokkel";
 
+
+    /**
+     * Tom constructor
+     */
+    public StartOkt() {
+        super(Request.Method.POST, null, null, null);
+        parametere = null;
+    }
+
     /**
      * Constructor som setter riktige verdier inn i parameter arrayen som skal sendes til server
      * @param pemSign String Signaturen som skal sendes til server
