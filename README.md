@@ -12,7 +12,7 @@ Applikasjonen har ingen funksjon annet enn som et konseptbevis for fingeravtrykk
 ## Krav
 
 * En Android-telefon med fingeravtrykk-leser og Android 6.0 eller nyere.
-* En webserver med PHP-prosessering
+* En HTTPS webserver med PHP-prosessering 
 * En MariaDB/MySQL databaseserver
 
 ## Oppsett
@@ -34,7 +34,8 @@ Følgende skritt må følges for å sette opp applikasjonen og kjøre konseptbev
 
 1. Åpne repository-mappen med Android Studio
 2. La Gradle synkronisere prosjektet
-3. Kjør applikasjonen på en virtuell enhet eller en enhet som er koblet til via ADB.
+3. Åpne filen ``app/src/main/java/com/example/applikasjon/MainActivity.java`` og endre verdien til ``HandlingsURL`` (linje 22) til å være lik URLen til webserveren. Merk at kun HTTPS er støttet.
+4. Kjør applikasjonen på en virtuell enhet eller en enhet som er koblet til via ADB.
 
 ## Forfattere
 
