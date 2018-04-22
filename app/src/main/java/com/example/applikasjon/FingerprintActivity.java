@@ -70,7 +70,7 @@ public class FingerprintActivity extends AppCompatActivity {
         }
         else { //Generer asymmetriske nøkler
             try {
-                fNokkel = KeyStore.getInstance("AndroidKeyStore");
+                fNokkel = KeyStore.getInstance("AndroidKeyStore"); //Laster inn android keystore systemet
                 fNokkel.load(null);
             } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
                 MainActivity.visFeilMelding("En feil har oppstått", this);
@@ -78,7 +78,7 @@ public class FingerprintActivity extends AppCompatActivity {
             if (MainActivity.uuid == null) { //Sjekker om brukeren har gjennomført førstegangsautentisering
                 genererNokler(null);
             }
-            genererNokler("OktNokkel"); //TEST, fjern sjekken hvis dette ikke fungerer
+            genererNokler("OktNokkel");
             if ((initSignatur(KEYNAME)) != null) {
                 FingerprintManager.CryptoObject cObjekt = new FingerprintManager.CryptoObject(signatur);
                 FingerprintHjelper hjelper = new FingerprintHjelper(this);
@@ -88,7 +88,7 @@ public class FingerprintActivity extends AppCompatActivity {
                     MainActivity.visFeilMelding("En feil har oppstått", FingerprintActivity.this);
                 }
                 hjelper.startAutentisering(fManager, cObjekt); //Sender objektene videre til autentiseringen
-                initSignatur("OktNokkel"); //TEST: Authenticated?
+                initSignatur("OktNokkel"); //Gjør klar øktnøkkelen sin signatur
             } else exit(0);
         }
     }
@@ -102,8 +102,8 @@ public class FingerprintActivity extends AppCompatActivity {
         try {
             //Initialiser signaturen ved hjelp av privatnøkkelen
             signatur = Signature.getInstance("SHA256withECDSA");
-            PrivateKey priv = (PrivateKey) fNokkel.getKey(nokkelnavn, null);
-            signatur.initSign(priv);
+            PrivateKey priv = (PrivateKey) fNokkel.getKey(nokkelnavn, null);  //Henter ut nøkkel
+            signatur.initSign(priv);  //Setter opp signaturen til privatnøkkelen
         } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException | InvalidKeyException e) {
             MainActivity.visFeilMelding(this.getString(R.string.feil), this);
         }
@@ -147,7 +147,7 @@ public class FingerprintActivity extends AppCompatActivity {
                 }
             }
         } catch ( InvalidAlgorithmParameterException e) {
-            System.exit(0);
+            System.exit(0);  //Avslutter
         }
     }
     /**

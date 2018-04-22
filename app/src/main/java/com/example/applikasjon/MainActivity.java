@@ -16,9 +16,9 @@ import android.support.v7.widget.Toolbar;
 public class MainActivity extends AppCompatActivity {
 
    public static SharedPreferences pref = null;
-   public static String uuid = null;
-   public static Context ct = null;
-   public static String OktNr = null;
+   public static String uuid = null;  //Brukes for å identifisere bruker
+   public static Context ct = null;   //Context som spesielt brukes for å vise feilmeldinger her
+   public static String OktNr = null; //Inneholder øktnummeret hvis en økt er opprettet med server
    public static final String HandlingsURL = "https://example.com"; //Endre denne til riktig server
 
     /**
@@ -26,11 +26,11 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);  //Sender nødvendig informasjon til parent-klassen
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ct = this.getApplicationContext();
+        ct = this.getApplicationContext(); //Setter kontekst
         uuid = getUuid();
         OktNr = getOktNr();
 
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         feil.setMessage(str).setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                con.startActivity(new Intent(con, FingerprintActivity.class));
+                con.startActivity(new Intent(con, FingerprintActivity.class)); //Sender tilbake til start
             }
         }).create().show();
     }
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
      * @return String uuid som brukes for å identifisere bruker
      */
     public String getUuid() {
-        pref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        pref = this.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE); //Henter filen som inneholder uuid
         if (uuid != null) {
             return uuid;
         }

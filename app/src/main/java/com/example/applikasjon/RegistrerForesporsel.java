@@ -13,7 +13,6 @@ public class RegistrerForesporsel extends StringRequest {
 
     private Map<String, String> parametere;   //Brukes av Volley for å sende data til siden
 
-
     /**
      * Tom constructor
      */

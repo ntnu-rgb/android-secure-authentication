@@ -37,7 +37,7 @@ public class UtforHandlingActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
-                Response.Listener<String> respons = new Response.Listener<String>() {
+                Response.Listener<String> respons = new Response.Listener<String>() { //Håndterer respons fra server
                     @Override
                     public void onResponse(String respons) {
                         JSONObject jsonRespons = null;
@@ -58,10 +58,10 @@ public class UtforHandlingActivity extends AppCompatActivity {
                 //Setter opp en forespørsel som skal sendes til serveren via Volley
                 JSONObject transaksjon = opprettTransaksjon();
                 String handlingSign = FingerprintHjelper.sign(transaksjon.toString());
-                if (handlingSign == null) {
+                if (handlingSign == null) { //Hvis signaturen ikke kunne opprettes
                     MainActivity.visFeilMelding("Feil ved autentisering", UtforHandlingActivity.this);
                     }
-                else {
+                else { //Hvis signaturen kunne opprettes
                     HandlingsForesporsel hForesporsel = new HandlingsForesporsel(respons, transaksjon.toString(), handlingSign);
                     RequestQueue queue = Volley.newRequestQueue(UtforHandlingActivity.this);             //Legg inn forespørselen i køen for å kjøre den
                     queue.add(hForesporsel);
