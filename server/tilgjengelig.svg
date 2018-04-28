@@ -1,0 +1,34 @@
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="1000" height="1000" id="svg2" version="1.1" inkscape:version="0.48.4 r9939"
+sodipodi:docname="Nowy dokument 1">
+<defs id="defs4">
+  <linearGradient id="linearGradient3766">
+    <stop style="stop-color:#42fe42;stop-opacity:1;" offset="0" id="stop3768" />
+    <stop id="stop3776" offset="0.23873562" style="stop-color:#2be52b;stop-opacity:1;" />
+    <stop id="stop3774" offset="0.62885183" style="stop-color:#1fa91f;stop-opacity:1;" />
+    <stop style="stop-color:#126312;stop-opacity:1;" offset="1" id="stop3770" />
+  </linearGradient>
+  <radialGradient inkscape:collect="always" xlink:href="#linearGradient3766" id="radialGradient3772" cx="183.84776" cy="504.8595"
+    fx="183.84776" fy="504.8595" r="501.03568" gradientTransform="matrix(1.0115292,0,0,0.07761063,-2.1196231,465.67704)"
+    gradientUnits="userSpaceOnUse" />
+</defs>
+<sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2"
+  inkscape:zoom="0.35" inkscape:cx="1596.8356" inkscape:cy="577.07785" inkscape:document-units="px" inkscape:current-layer="layer1"
+  showgrid="false" fit-margin-top="0" fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0" inkscape:window-width="1366"
+  inkscape:window-height="705" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" />
+<metadata id="metadata7">
+  <rdf:RDF>
+    <cc:Work rdf:about="">
+      <dc:format>image/svg+xml</dc:format>
+      <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      <dc:title></dc:title>
+    </cc:Work>
+  </rdf:RDF>
+</metadata>
+<g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(1829.8577,-291.01458)">
+  <path sodipodi:type="arc" style="color:#000000;fill:url(#radialGradient3772);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+    id="path2996" sodipodi:cx="183.84776" sodipodi:cy="504.8595" sodipodi:rx="501.03568" sodipodi:ry="36.36549" d="m 684.88344,504.8595 c 0,20.0841 -224.32131,36.36549 -501.03568,36.36549 -276.714359,0 -501.03567,-16.28139 -501.03567,-36.36549 0,-20.08411 224.321311,-36.36549 501.03567,-36.36549 276.71437,0 501.03568,16.28138 501.03568,36.36549 z"
+    transform="matrix(0.99793293,0,0,13.749299,-1513.3254,-6150.4496)" />
+</g>
+</svg>
