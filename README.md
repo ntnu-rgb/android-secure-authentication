@@ -17,7 +17,7 @@ Applikasjonen har ingen funksjon annet enn som et konseptbevis for fingeravtrykk
 
 ## Oppsett
 
-Dersom serveren fortsatt er tilgjengelig kan man plukke opp nyeste ferdigbygde APK fra [releases](releases).
+Dersom serveren fortsatt er tilgjengelig kan man plukke opp nyeste ferdigbygde APK fra [releases](https://github.com/ntnu-rgb/android-sikker-fingeravtrykk-autentisering/releases).
 For å sjekke om serveren er tilgjengelig, sjekk status på <https://folk.ntnu.no/sturlaba/sfa/>
 
 Dersom serveren ikke er tilgjengelig må man sette opp server og bygge applikasjonen selv. Fremgangsmåten for dette er beskrevet under.
