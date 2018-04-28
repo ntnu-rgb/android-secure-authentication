@@ -17,20 +17,27 @@ Applikasjonen har ingen funksjon annet enn som et konseptbevis for fingeravtrykk
 
 ## Oppsett
 
+Dersom serveren fortsatt er tilgjengelig kan man plukke opp nyeste ferdigbygde APK fra [releases](releases).
+For å sjekke om serveren er tilgjengelig, sjekk status på <https://folk.ntnu.no/sturlaba/sfa/>
+
+Dersom serveren ikke er tilgjengelig må man sette opp server og bygge applikasjonen selv. Fremgangsmåten for dette er beskrevet under.
+
+### Manuelt oppsett
+
 Følgende skritt må følges for å sette opp applikasjonen og kjøre konseptbeviset
 
-### Databaseserver
+#### Databaseserver
 
 1. Opprett en database med navnet ``sfa``.
 2. Importer ``server/DB/opprett.sql`` til sfa-databasen.
 3. Opprett en bruker som har følgende rettigheter for sfa-databasen: ``SELECT, INSERT, UPDATE, DELETE``.
 
-### Applikasjons/Webserver
+#### Applikasjons/Webserver
 
 1. Kopier innholdet fra ``server``-mappen til webserveren.
 2. Endre brukernavn, passord og hostname i ``DB/sql_bruker.php`` slik at feltene stemmer med databasebrukeren som ble opprettet. Eventuelt fjern require og endre verdiene direkte i ``classes/DB.php``, linje 19 til 23.
 
-### Applikasjon
+#### Applikasjon
 
 1. Åpne repository-mappen med Android Studio
 2. La Gradle synkronisere prosjektet
