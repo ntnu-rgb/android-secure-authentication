@@ -8,14 +8,8 @@ En Android-applikasjon og server som implementerer sikker autentisering ved hjel
 Som en del av bachelor-oppgaven skulle vi utvikle en applikasjon som benytter seg av fingeravtrykk og nøkler lagret i et maskinvarestøttet nøkkellager for å autentisere brukere ovenfor en server.
 Applikasjonen har ingen funksjon annet enn som et konseptbevis for fingeravtrykk-autentisering.
 
-
-## Krav
-
-* En Android-telefon med fingeravtrykk-leser og Android 6.0 eller nyere.
-* En HTTPS webserver med PHP-prosessering 
-* En MariaDB/MySQL databaseserver
-
 ## Oppsett
+Applikasjonen fungerer på Android-enheter med fingeravtrykk-leser og Android 6.0 eller nyere.
 
 Dersom serveren fortsatt er tilgjengelig kan man plukke opp nyeste ferdigbygde APK fra [releases](https://github.com/ntnu-rgb/android-sikker-fingeravtrykk-autentisering/releases).
 For å sjekke om serveren er tilgjengelig, sjekk status på <https://folk.ntnu.no/sturlaba/sfa/>
@@ -25,6 +19,10 @@ Dersom serveren ikke er tilgjengelig må man sette opp server og bygge applikasj
 ### Manuelt oppsett
 
 Følgende skritt må følges for å sette opp applikasjonen og kjøre konseptbeviset
+
+#### Krav
+* En MariaDB/MySQL databaseserver
+* En HTTPS webserver med PHP-prosessering 
 
 #### Databaseserver
 
