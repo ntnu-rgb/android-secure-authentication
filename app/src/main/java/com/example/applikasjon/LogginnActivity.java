@@ -58,13 +58,13 @@ public class LogginnActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject jsonRespons = new JSONObject(response);
+                            JSONObject jsonRespons = new JSONObject(response);  //Gjør responsen om til jsonobject så man kan lese den
                             boolean suksess = jsonRespons.getBoolean("suksess");  //Henter ut verdien som sier om forespørselen var vellykket eller ikke
                             if (suksess) {
                                 String uuid = jsonRespons.getString("uuid");
                                 //Lagrer uuid
-                                MainActivity.setUuid(uuid);
-                                startOkt(LogginnActivity.this);
+                                MainActivity.setUuid(uuid);    //Setter uuid som brukes til å gjenkjenne brukeren
+                                startOkt(LogginnActivity.this); //Forsøker å opprette en økt
                             } else {
                                 MainActivity.visFeilMelding("Kunne ikke oppdatere data", LogginnActivity.this);
                             }
@@ -105,12 +105,12 @@ public class LogginnActivity extends AppCompatActivity {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void startOkt(Context con) {
-        Signature signatur = FingerprintHjelper.kryptOb.getSignature();
+        Signature signatur = FingerprintHjelper.kryptOb.getSignature(); //Henter nåværende signatur i kryptoobjektet
         try {
-            byte[] forSigning = FingerprintActivity.pemOktKey.getBytes();
+            byte[] forSigning = FingerprintActivity.pemOktKey.getBytes();  //Gjør klar bytene til signering
             signatur.update(forSigning);
-            byte[] signert = signatur.sign();
-            FingerprintHjelper.pemSign = Base64.encodeToString(signert, Base64.DEFAULT);
+            byte[] signert = signatur.sign();   //Signerer
+            FingerprintHjelper.pemSign = Base64.encodeToString(signert, Base64.DEFAULT); //Endrer til string for serveren
         } catch (SignatureException e) {
             MainActivity.visFeilMelding("En feil har oppstått", con);
         }
@@ -126,14 +126,14 @@ public class LogginnActivity extends AppCompatActivity {
             public void onResponse(String res) {
                 JSONObject jsonRes = null;
                 try {
-                    jsonRes = new JSONObject(res);
+                    jsonRes = new JSONObject(res);  //Gjør responsen om til jsonobject så man kan lese den
                     boolean suksess = jsonRes.getBoolean("suksess");
-                    if (suksess) {
+                    if (suksess) { //Hvis alt gikk bra for serveren
                         MainActivity.OktNr = jsonRes.getString("oktNr");
-                        Intent regIntent = new Intent(con, UtforHandlingActivity.class);
+                        Intent regIntent = new Intent(con, UtforHandlingActivity.class); //Gjør klart til å starte neste aktivitet
                         con.startActivity(regIntent);
                     }
-                    else {
+                    else { //Nullstiller økt og uuid så brukeren må logge inn på nytt
                         MainActivity.OktNr = null;
                         MainActivity.setUuid(null);
                         MainActivity.visFeilMelding("En feil har oppstått, vennligst logg inn på nytt", con);

@@ -24,8 +24,8 @@ public class RegistrerActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registrer); //"Test"
+        super.onCreate(savedInstanceState); //Sender nødvendig informasjon til parent-klassen
+        setContentView(R.layout.activity_registrer);
 
         //Henter ut verdier fra XML filen
         final EditText brukerNavn = (EditText) findViewById(R.id.epost);
@@ -40,10 +40,10 @@ public class RegistrerActivity extends AppCompatActivity {
                 final String passord = pass.getText().toString();
                 Response.Listener<String> respons = new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String respons) {
+                    public void onResponse(String respons) { //Håndterer respons fra serveren
                         JSONObject jsonRespons = null;
                         try {
-                            jsonRespons = new JSONObject(respons);
+                            jsonRespons = new JSONObject(respons); //Gjør klar responsen som et JSONObjekt
                             boolean suksess = jsonRespons.getBoolean("suksess");
                             if (suksess) { //Hvis serveren har returnert suksess starter innloggingen
                                Intent intent = new Intent(RegistrerActivity.this, LogginnActivity.class);

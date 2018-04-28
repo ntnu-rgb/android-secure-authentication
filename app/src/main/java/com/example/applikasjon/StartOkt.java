@@ -19,12 +19,11 @@ public class StartOkt extends StringRequest {
     private Context kontekst = null;
     private String okt = "OktNokkel";
 
-
     /**
      * Tom constructor
      */
     public StartOkt() {
-        super(Request.Method.POST, null, null, null);
+        super(Request.Method.POST, null, null, null); //Sender nødvendig informasjon til parent-klassen
         parametere = null;
     }
 
@@ -36,7 +35,7 @@ public class StartOkt extends StringRequest {
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public StartOkt(String pemSign, Response.Listener<String> listener, Context con) {
-        super(Request.Method.POST, MainActivity.HandlingsURL, listener, null);
+        super(Request.Method.POST, MainActivity.HandlingsURL, listener, null); //Sender nødvendig informasjon til parent-klassen
         this.kontekst = con;
 
         //Setter inn de forskjellige parameterene som skal sendes til server

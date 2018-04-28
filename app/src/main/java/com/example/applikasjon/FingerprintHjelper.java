@@ -67,6 +67,7 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
         }
     }
 
+
     /**
      * Hvis autentiseringen ikke er godkjent vises en feilmelding som også starter fingerprintactivity på nytt
      */
@@ -92,13 +93,13 @@ class FingerprintHjelper extends FingerprintManager.AuthenticationCallback {
      */
     public static String sign(String skalSigneres) {
         Signature signatur = FingerprintActivity.signatur;
-        byte[] forSigning = skalSigneres.getBytes();
+        byte[] forSigning = skalSigneres.getBytes();   //Henter ut bytes så man kan signere
         try {
-            signatur.update(forSigning);
-            byte[] signert = signatur.sign();
-            return Base64.encodeToString(signert, Base64.DEFAULT);
+            signatur.update(forSigning);              //Gjør klar bytene til signering
+            byte[] signert = signatur.sign();         //Signerer
+            return Base64.encodeToString(signert, Base64.DEFAULT);  //Gjør klar til bruk i string-form
         } catch (SignatureException e) {
-           e.printStackTrace();
+           MainActivity.visFeilMelding("Autentisering feilet, Vennligst prøv igjen", MainActivity.ct);
         }
         return null;
     }
